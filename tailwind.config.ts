@@ -40,6 +40,17 @@ const config: Config = {
         }
       },
     },
+    fontSize: {
+      sm: '0.8rem',
+      md: '0.9rem',
+      lg: '1rem',
+      xl: '1.25rem',
+      '2xl': '1.563rem',
+      '2.5xl': '1.653rem',
+      '3xl': '1.953rem',
+      '4xl': '2.441rem',
+      '5xl': '3.052rem'
+    },
   },
   plugins: [],
 };
