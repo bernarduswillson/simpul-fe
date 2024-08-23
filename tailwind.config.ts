@@ -11,6 +11,7 @@ const config: Config = {
     extend: {
       colors: {
         background: '#333333',
+        white: '#F2F2F2',
         primary: {
           blue: "#2F80ED",
           black: "#4F4F4F",
@@ -53,6 +54,7 @@ const config: Config = {
       '4xl': '2.441rem',
       '5xl': '3.052rem'
     },
+    display: ["group-hover"],
   },
   plugins: [],
 };
