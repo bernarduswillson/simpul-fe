@@ -1,11 +1,20 @@
 'use client';
 
+// Libs
+import { useState } from "react";
+
+// Components
 import SearchBar from "@/components/input/SearchBar";
 import CornerButton from "@/components/button/CornerButton";
 
+
 export default function Home() {
-  const handleButtonClick = (message: string) => {
-    console.log(message);
+  // State
+  const [active, setActive] = useState<"task" | "inbox" | "none">("none");
+
+  // Handlers
+  const handleButtonClick = (clicked: "task" | "inbox" | "none") => {
+    setActive(clicked);
   };
 
   return (
@@ -18,7 +27,7 @@ export default function Home() {
         <SearchBar />
 
         <div className="fixed bottom-6 right-6">
-          <CornerButton onClick={handleButtonClick} />
+          <CornerButton active={active} onClick={handleButtonClick} />
         </div>
       </div>
     </main>
