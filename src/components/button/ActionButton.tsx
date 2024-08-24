@@ -37,7 +37,7 @@ export default function ActionButton(props: ActionButtonProps) {
         onClick={() => handleClick(type)}
       >
         {/* Label */}
-        <p className={`absolute h-[50px] top-[-30px] left-0 right-0 text-center lato-bold text-white text-md transition-all duration-300 ${type === active ? 'opacity-0' : 'opacity-100'}`}>
+        <p className={`absolute h-[50px] top-[-30px] left-0 right-0 text-center lato-bold text-white text-md transition-all duration-300 ${type === active || active !== 'none' ? 'opacity-0' : 'opacity-100'}`}>
           {type === "task" ? "Task" : "Inbox"}
         </p>
 
