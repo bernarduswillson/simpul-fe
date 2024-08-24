@@ -48,10 +48,10 @@ export default function Home() {
 
         {/* Popup */}
         <div className={`fixed h-[70vh] inset-x-0 flex items-end justify-center bottom-28 right-6 ml-6 z-20 md:inset-auto md:bottom-28 md:right-6 md:h-[734px] md:w-[734px]`}>
-          <div className={`relative w-full transition-all duration-300 bg-black ${active === 'inbox' ? 'translate-x-[0px] h-[100%] w-[100%] opacity-100' : 'translate-x-[520px] h-[0px] w-[0px] opacity-100'}`}>
+          <div className={`absolute w-full transition-all duration-300 ${active === 'inbox' ? 'translate-x-[0px] h-[100%] w-[100%] opacity-100' : 'translate-x-[820px] h-[0px] w-[0px] opacity-100'}`}>
             <InboxPopup />
           </div>
-          <div className={`relative w-full transition-all duration-300 bg-black ${active === 'task' ? 'translate-x-[0px] h-[100%] w-[100%] opacity-100' : 'translate-x-[520px] h-[0px] w-[0px] opacity-100'}`}>
+          <div className={`absolute w-full transition-all duration-300 ${active === 'task' ? 'translate-x-[0px] h-[100%] w-[100%] opacity-100' : 'translate-x-[820px] h-[0px] w-[0px] opacity-100'}`}>
             <TaskPopup />
           </div>
         </div>
