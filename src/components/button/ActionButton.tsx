@@ -29,10 +29,10 @@ export default function ActionButton(props: ActionButtonProps) {
   return (
     <div className="relative">
       <button
-        className={`bg-white rounded-full flex items-center justify-center w-[62px] h-[62px] hover:scale-110 transition-all ease-in-out cursor-pointer
+        className={`rounded-full flex items-center justify-center w-[62px] h-[62px] hover:scale-110 transition-all ease-in-out cursor-pointer
+          ${type === "task" ? (active === "task" ? "bg-indicator-yellow" : "bg-white") : ""}
+          ${type === "inbox" ? (active === "inbox" ? "bg-indicator-purple" : "bg-white") : ""}
           ${active === type ? "scale-110" : ""}
-          ${type === "task" && active === type ? "bg-indicator-yellow" : ""}
-          ${type === "inbox" && active === type ? "bg-indicator-purple" : ""}
         `}
         onClick={() => handleClick(type)}
       >
