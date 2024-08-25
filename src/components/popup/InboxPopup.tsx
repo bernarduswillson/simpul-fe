@@ -65,7 +65,7 @@ export default function InboxPopup(props: InboxPopupProps) {
         fetchChats();
       }
     }
-  }, [isActive, userState.id, dispatch, loading, data.length]);
+  }, [isActive, userState.id, dispatch, data.length]);
 
   useEffect(() => {
     if (loading && animationContainerRef.current) {
@@ -91,11 +91,12 @@ export default function InboxPopup(props: InboxPopupProps) {
       </div>
 
       {/* Chat List */}
-      <div className={`w-full relative ${loading ? 'flex flex-col justify-center items-center h-full' :''} overflow-y-auto scrollbar-thin scrollbar-thumb-primary-black scrollbar-track-white`}>
+      <div className={`w-full relative ${loading || data.length === 0 ? 'flex flex-col justify-center items-center h-full' :''} overflow-y-auto scrollbar-thin scrollbar-thumb-primary-black scrollbar-track-white`}>
         {loading ? (
           <div ref={animationContainerRef} className="w-[30%] h-[30%]"></div>
         ) : data.length === 0 ? (
-          <p>No chats available</p>
+          <div className="flex flex-col items-center justify-center h-[30%] w-[30%]">
+          </div>
         ) : (
           filteredData.map((chat) => (
             <div key={chat.id} className="relative flex justify-center">
