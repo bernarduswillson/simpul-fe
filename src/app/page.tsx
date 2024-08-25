@@ -1,7 +1,7 @@
 'use client';
 
 // Pages
-import Home from "@/pages/Home";
+import Home from "@/appPages/Home";
 
 // Providers
 import ReduxProvider from "@/components/providers/ReduxProvider";
