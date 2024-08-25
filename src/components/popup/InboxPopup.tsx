@@ -68,10 +68,12 @@ export default function InboxPopup(props: InboxPopupProps) {
   }, [isActive, userState.id, dispatch, data.length]);
 
   useEffect(() => {
-    if (loading && animationContainerRef.current) {
+    const container = animationContainerRef.current;
+
+    if (loading && container) {
       lottie.loadAnimation({
         ...chatLoadingAnimationOptions,
-        container: animationContainerRef.current,
+        container,
       });
     }
   }, [loading]);
@@ -96,6 +98,7 @@ export default function InboxPopup(props: InboxPopupProps) {
           <div ref={animationContainerRef} className="w-[30%] h-[30%]"></div>
         ) : data.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-[30%] w-[30%]">
+            <p className="text-primary-black text-lg font-bold">No Chat Found</p>
           </div>
         ) : (
           filteredData.map((chat) => (
