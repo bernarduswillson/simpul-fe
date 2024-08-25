@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // Libs
 import { useEffect, useState, useRef } from "react";
 import lottie from 'lottie-web';
@@ -78,13 +79,15 @@ export default function InboxPopup(props: InboxPopupProps) {
     }
   }, [loading]);
 
+  
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
     dispatch(searchChats(term));
   };
-
-
+  
+  
+  if (!isActive) return null;
   return (
     <div className="relative bg-white h-full w-full rounded-lg flex flex-col items-center">
       {/* Search Bar */}
