@@ -56,6 +56,8 @@ const config: Config = {
     },
     display: ["group-hover"],
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
 };
 export default config;

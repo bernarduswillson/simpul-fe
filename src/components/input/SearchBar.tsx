@@ -2,18 +2,16 @@
 import Image from "next/image";
 
 // Assets
-import searchIcon from "@/assets/icons/search-ic.svg";
+import SearchIcon from "@/assets/icons/search-ic";
 
 
 export default function SearchBar() {
   return (
     <div className="relative bg-primary-black h-10 w-full flex items-center">
       {/* Search Icon */}
-      <Image 
-        src={searchIcon}
-        alt="search icon"
-        className="p-[7px] h-full ml-3"
-      />
+      <div className="ml-3">
+        <SearchIcon width={20} height={20} fillColor="#FFFFFF" />
+      </div>
       
       {/* Search Input */}
       <input

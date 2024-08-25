@@ -7,12 +7,12 @@ import lightningIcon from "@/assets/icons/lightning-ic.svg";
 // Components
 import ActionButton from "./ActionButton";
 
-
 // Interface
 interface CornerButtonProps {
   active: "task" | "inbox" | "none";
   onClick?: (clicked: "task" | "inbox" | "none") => void;
 }
+
 
 export default function CornerButton(props: CornerButtonProps) {
   // Props

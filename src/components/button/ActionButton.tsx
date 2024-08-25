@@ -5,13 +5,13 @@ import Image from "next/image";
 import TaskIcon from "@/assets/icons/task-ic";
 import InboxIcon from "@/assets/icons/inbox-ic";
 
-
 // Interface
 interface ActionButtonProps {
   type: "task" | "inbox";
   active: "task" | "inbox" | "none";
   onClick?: (clicked: "task" | "inbox" | "none") => void;
 }
+
 
 export default function ActionButton(props: ActionButtonProps) {
   // Props
