@@ -1,0 +1,195 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+// Libs
+import { useEffect, useState, useRef } from "react";
+import lottie from 'lottie-web';
+
+// Assets
+import chatLoadingAnimation from "@/assets/animations/chat-loading.json";
+import ExitIcon from "@/assets/icons/exit-ic";
+import LeftArrowIcon from "@/assets/icons/left-arrow-ic";
+
+// Components
+import Button from "@/components/button/Button";
+import MessageList from "@/components/chat/MessageList";
+
+// Hooks
+import apiClient from "@/api/apiClient";
+import { useAppSelector, useAppDispatch } from "@/redux/store";
+
+// Interface
+import Message from "@/interfaces/message";
+import Chat from "@/interfaces/chat";
+interface ChatPopupProps {
+  chat: Chat | null;
+  onClose: () => void;
+}
+
+export default function ChatPopup(props: ChatPopupProps) {
+  // Props
+  const { chat, onClose } = props;
+
+  // Lottie Configuration
+  const chatLoadingAnimationOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: chatLoadingAnimation,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  }
+
+  // States
+  const animationContainerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const userState = useAppSelector((state) => state.user.value);
+  const [data, setData] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Hooks
+  useEffect(() => {
+    if (chat && chat.id && userState.id) {
+      const fetchMessages = async () => {
+        setLoading(true);
+        try {
+          const response = await apiClient.get('/messages/' + chat.id);
+          if (response.status === 200 && response.data.status === 'success') {
+            setData(response.data.data);
+            console.log(response.data.data)
+          } else {
+            setData([]);
+          }
+        } catch (error) {
+          setData([]);
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchMessages();
+    }
+  }, [chat, userState.id]);
+
+  useEffect(() => {
+    const container = animationContainerRef.current;
+
+    if (loading && container) {
+      lottie.loadAnimation({
+        ...chatLoadingAnimationOptions,
+        container,
+      });
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView();
+  }, [data]);
+
+
+  const isSameDay = (date1: Date, date2: Date): boolean => {
+    return date1.toDateString() === date2.toDateString();
+  };
+
+  const parseDate = (date: string): string => {
+    const newDate = new Date(date);
+
+    const day = newDate.getDate();
+    const month = newDate.toLocaleString('default', { month: 'long' });
+    const year = newDate.getFullYear();
+
+    if (isSameDay(new Date(), newDate)) {
+      return `Today, ${month} ${day}, ${year}`;
+    }
+
+    return `${month} ${day}, ${year}`;
+  }
+
+  return (
+    <div className="relative bg-white h-full w-full rounded-lg flex flex-col justify-between">
+      {/* Navigation Bar */}
+      <div className="flex h-[90px] justify-between bg-white shadow-md">
+        <div className="w-[70px] flex justify-center items-center">
+          <button className="p-3" onClick={onClose}>
+            <LeftArrowIcon width={20} height={20} fillColor="#000" />
+          </button>
+        </div>
+        <div className="flex-1 overflow-hidden">
+          {
+            chat && (
+              <div className="h-full justify-center flex flex-col">
+                <h1 className="text-primary-blue lato-bold text-xl truncate">{chat.name}</h1>
+                {chat.participants.length > 2 && (
+                  <p className="text-primary-black lato-regular text-md">{chat.participants.length} Participants</p>
+                )}
+              </div>
+            )
+          }
+        </div>
+        <div className="w-[70px] flex justify-center items-center">
+          <button className="p-3" onClick={onClose}>
+            <ExitIcon width={20} height={20} fillColor="#000"/>
+          </button>
+        </div>
+      </div>
+      
+      {/* Chat Content */}
+     <div className={`w-full flex-1 relative ${loading || data.length === 0 ? 'flex flex-col justify-center items-center flex-1' : ''} overflow-y-auto scrollbar-thin scrollbar-thumb-primary-black scrollbar-track-white`}>
+        {loading ? (
+          <div ref={animationContainerRef} className="w-[30%] h-[30%]"></div>
+        ) : data.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[30%] w-[30%]">
+            <p className="text-primary-black text-lg font-bold">No Chat Found</p>
+          </div>
+        ) : (
+          <>
+            {data.map((message, index) => {
+              const showDateSeparator =
+                index === 0 ||
+                !isSameDay(new Date(data[index - 1].createdAt), new Date(message.createdAt));
+
+              return (
+                <div key={message.id} className="relative flex first:mt-5">
+                  <div className="w-full relative">
+                    {showDateSeparator && (
+                      <div className="relative text-center text-primary-black lato-bold text-lg py-2">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-primary-black mx-8"></div>
+                        </div>
+                        <span className="relative z-10 bg-white px-5">
+                          {parseDate(message.createdAt)}
+                        </span>
+                      </div>
+                    )}
+                    <MessageList message={message} />
+                  </div>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+      </div>
+
+      {/* Chat Input */}
+      <div className="flex items-center justify-center shadow-md border-t-2">
+        <input 
+          type="text" 
+          placeholder="Type a new message"
+          className="w-full bg-white px-3 py-2 m-5 border-2 border-primary-gray rounded-lg lato-regular focus:outline-none" 
+        />
+        <div className="mr-5">
+          <div className="hidden sm:block">
+            <Button width="100" onClick={() => {}}>
+              Send
+            </Button>
+          </div>
+          <div className="block sm:hidden">
+            <Button width="70" onClick={() => {}}>
+              &gt;
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -9,6 +9,7 @@ import chatLoadingAnimation from "@/assets/animations/chat-loading.json";
 // Components
 import InboxSearchBar from "@/components/input/InboxSearchBar";
 import ChatList from "@/components/chat/ChatList";
+import ChatPopup from "@/components/popup/ChatPopup";
 
 // Hooks
 import apiClient from "@/api/apiClient";
@@ -36,11 +37,12 @@ export default function InboxPopup(props: InboxPopupProps) {
   }
 
   // States
+  const animationContainerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const userState = useAppSelector((state) => state.user.value);
   const { data, filteredData, loading } = useAppSelector((state) => state.chat.value);
   const [searchTerm, setSearchTerm] = useState("");
-  const animationContainerRef = useRef<HTMLDivElement>(null);
+  const [clickedChat, setClickedChat] = useState<string | null>(null);
 
   // Hooks
   useEffect(() => {
@@ -52,6 +54,7 @@ export default function InboxPopup(props: InboxPopupProps) {
             const response = await apiClient.get('/chats/' + userState.id);
             if (response.status === 200 && response.data.status === 'success') {
               dispatch(setChats(response.data.data));
+              // dispatch(setChats([...response.data.data, ...response.data.data, ...response.data.data]));
             } else {
               dispatch(setChats([]));
             }
@@ -89,7 +92,7 @@ export default function InboxPopup(props: InboxPopupProps) {
   
   if (!isActive) return null;
   return (
-    <div className="relative bg-white h-full w-full rounded-lg flex flex-col items-center">
+    <div className="relative bg-white h-full w-full rounded-lg flex flex-col items-center overflow-hidden">
       {/* Search Bar */}
       <div className="w-[90%] mt-8 mb-2">
         <InboxSearchBar value={searchTerm} onChange={handleSearchChange} />
@@ -105,11 +108,23 @@ export default function InboxPopup(props: InboxPopupProps) {
           </div>
         ) : (
           filteredData.map((chat) => (
-            <div key={chat.id} className="relative flex justify-center">
-              <ChatList chat={chat} />
+            <div key={chat.id} className="relative flex justify-center last:pb-2">
+              <ChatList chat={chat} onClick={(id) => setClickedChat(id)} />
             </div>
           ))
         )}
+      </div>
+
+      {/* Chat Popup */}
+      <div
+        className={`absolute z-50 w-full h-full transition-all duration-300 ease-in-out ${
+          clickedChat ? 'top-0 left-0' : 'left-full'
+        }`}
+      >
+        <ChatPopup
+          chat={data.find((chat) => chat.id === clickedChat) ?? null}
+          onClose={() => setClickedChat(null)}
+        />
       </div>
     </div>
   );

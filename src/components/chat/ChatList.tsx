@@ -6,9 +6,16 @@ import { useAppSelector } from "@/redux/store";
 
 // Interface
 import Chat from "@/interfaces/chat";
+interface ChatListProps {
+  chat: Chat;
+  onClick?: (id: string) => void;
+}
 
 
-export default function ChatList({ chat }: { chat: Chat }) {
+export default function ChatList(props: ChatListProps) {
+  // Props
+  const { chat, onClick } = props;
+
   // States
   const userState = useAppSelector((state) => state.user.value);
 
@@ -31,8 +38,17 @@ export default function ChatList({ chat }: { chat: Chat }) {
     return `${hours}:${minutes}`;
   }
 
+  const handleClick = (clicked: string) => {
+    if (onClick) {
+      onClick(clicked);
+    }
+  }
+
   return (
-    <button className="flex gap-2 md:gap-5 w-[90%] relative items-center justify-between border-b border-primary-gray py-3 pb-8">
+    <button 
+      className="flex gap-2 md:gap-5 w-[90%] relative items-center justify-between border-b border-primary-gray py-3 pb-8 hover:scale-[1.02] transition-all duration-300"
+      onClick={() => handleClick(chat.id)}
+    >
       {/* Profile Image */}
       <div className="h-full mt-2">
         <ChatProfileImage participants={chat.participants} />
