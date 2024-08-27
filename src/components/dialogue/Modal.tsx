@@ -2,13 +2,13 @@
 import { motion, AnimatePresence } from 'framer-motion'
 
 // Interface
-interface WarningModalProps {
+interface ModalProps {
   onClose: () => void,
   isOpen: boolean,
   children: React.ReactNode,
 }
 
-const WarningModal = (props: WarningModalProps): JSX.Element => {
+const Modal = (props: ModalProps): JSX.Element => {
   const {
     onClose,
     isOpen,
@@ -19,7 +19,7 @@ const WarningModal = (props: WarningModalProps): JSX.Element => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed z-50 backdrop-blur inset-0 flex items-center justify-center bg-scrim rounded-lg"
+          className="fixed z-50 backdrop-blur inset-0 flex items-center justify-center bg-scrim rounded-xl"
           initial={{ opacity: 0 }}
           animate={{
             opacity: 1,
@@ -50,4 +50,4 @@ const WarningModal = (props: WarningModalProps): JSX.Element => {
   )
 };
 
-export default WarningModal;
+export default Modal;

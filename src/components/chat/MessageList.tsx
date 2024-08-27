@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 // Components
 import EditMessageButton from "@/components/button/EditMessageButton";
 import Button from "@/components/button/Button";
-import Modal from "@/components/dialogue/WarningModal";
+import Modal from "@/components/dialogue/Modal";
 
 // Hooks
 import { useAppSelector, useAppDispatch } from "@/redux/store";
@@ -30,34 +30,44 @@ export default function MessageList(props: MessageListProps) {
   const userState = useAppSelector((state) => state.user.value);
   const isCurrentUser = message.user.id === userState.id;
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editedMessage, setEditedMessage] = useState(message.content);
 
   const handleEditMessageButton = async (type: "edit" | "delete") => {
+    if (type === "edit") {
+      setIsEditModalOpen(true);
+    } else {
+      setIsDeleteModalOpen(true);
+    }
+  }
+
+  const handleEditMessage = async () => {
     // setLoading(true);
+    setIsEditModalOpen(false);
     try {
-      if (type === "edit") {
-        console.log("Edit message");
+      const updatedMessageData = {
+        content: editedMessage,
+      };
+  
+      const response = await apiClient.put(`/messages/${message.id}`, updatedMessageData);
+      if (response.status === 200 && response.data.status === 'success') {
+        dispatch(setLastMessage(response.data.data.lastMessage));
+        console.log("Message edited");
+        onChange && onChange(true);
       } else {
-        setIsModalOpen(true);
-        // const response = await apiClient.delete(`/messages/${message.id}`);
-        // if (response.status === 200 && response.data.status === 'success') {
-        //   dispatch(setLastMessage(response.data.data.lastMessage));
-        //   console.log("Message deleted");
-        //   onChange && onChange(true);
-        // } else {
-        //   console.log("Failed to delete message");
-        // }
+        console.log("Failed to edit message");
       }
     } catch (error) {
       console.error(error);
     } finally {
       // setLoading(false);
-    } 
-  }
+    }
+  };
 
   const handleDeleteMessage = async () => {
     // setLoading(true);
-    setIsModalOpen(false);
+    setIsDeleteModalOpen(false);
     try {
       const response = await apiClient.delete(`/messages/${message.id}`);
       if (response.status === 200 && response.data.status === 'success') {
@@ -149,7 +159,10 @@ export default function MessageList(props: MessageListProps) {
           style={{ backgroundColor: !isCurrentUser ? userBubbleColor : "#EEDCFF" }}
         >
           <p className="leading-5">{message.content}</p>
-          <p className="text-sm mt-2">{parseTime(message.createdAt)}</p>
+          <div className="flex">
+            <p className="text-sm mt-2">{parseTime(message.createdAt)} </p>
+            <p className={`${message.isUpdated ? 'block' : 'hidden'} text-sm mt-2 ml-1`}>(Edited)</p>
+          </div>
         </div>
         {!isCurrentUser && 
           <div className="absolute top-0 right-[-8px] w-7 h-7 flex justify-center items-center">
@@ -163,8 +176,38 @@ export default function MessageList(props: MessageListProps) {
         }
       </div>
 
-      {/* Modal */}
-      <Modal onClose={() => setIsModalOpen(false)} isOpen={isModalOpen}>
+      {/* Edit Modal */}
+      <Modal onClose={() => setIsEditModalOpen(false)} isOpen={isEditModalOpen}>
+        <h2 className="mb-3 text-black lato-bold header-3 text-center">
+          Edit
+        </h2>
+        <input
+          type="text"
+          className="w-full border-2 border-primary-gray rounded-lg px-3 py-2 lato-regular focus:outline-none mb-7"
+          value={editedMessage}
+          onChange={(e) => setEditedMessage(e.target.value)}
+        />
+        <div>
+          <div className='flex gap-7'>
+            <Button
+              width='150'
+              onClick={() => handleEditMessage()}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="secondary"
+              width='150'
+              onClick={() => setIsEditModalOpen(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal onClose={() => setIsDeleteModalOpen(false)} isOpen={isDeleteModalOpen}>
         <h2 className="mb-1 text-black lato-bold header-3 text-center">
           Delete
         </h2>
@@ -174,7 +217,7 @@ export default function MessageList(props: MessageListProps) {
         <div>
           <div className='flex gap-7'>
             <Button
-            variant="warning"
+              variant="warning"
               width='150'
               onClick={() => handleDeleteMessage()}
             >
@@ -183,7 +226,7 @@ export default function MessageList(props: MessageListProps) {
             <Button
               variant="secondary"
               width='150'
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => setIsDeleteModalOpen(false)}
             >
               Cancel
             </Button>
