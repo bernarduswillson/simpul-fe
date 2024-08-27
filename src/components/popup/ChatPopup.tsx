@@ -7,6 +7,7 @@ import lottie from 'lottie-web';
 import chatLoadingAnimation from "@/assets/animations/chat-loading.json";
 import ExitIcon from "@/assets/icons/exit-ic";
 import LeftArrowIcon from "@/assets/icons/left-arrow-ic";
+import loadingAnimation from "@/assets/animations/spinner-loading.json";
 
 // Components
 import Button from "@/components/button/Button";
@@ -15,6 +16,7 @@ import MessageList from "@/components/chat/MessageList";
 // Hooks
 import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
+import { setLastMessage } from "@/redux/reducers/chatSlice";
 
 // Interface
 import Message from "@/interfaces/message";
@@ -38,14 +40,26 @@ export default function ChatPopup(props: ChatPopupProps) {
     }
   }
 
+  const loadingAnimationOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: loadingAnimation,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  }
+
   // States
   const animationContainerRef = useRef<HTMLDivElement>(null);
+  const animationChatContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const userState = useAppSelector((state) => state.user.value);
   const [data, setData] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sendLoading, setSendLoading] = useState(false);
   const [isChanged, setIsChangedState] = useState<boolean | null>(null);
+  const [message, setMessage] = useState("");
 
   // Hooks
   useEffect(() => {
@@ -88,9 +102,47 @@ export default function ChatPopup(props: ChatPopupProps) {
   }, [loading]);
 
   useEffect(() => {
+      const container = animationChatContainerRef.current;
+
+      if (container) {
+        container.innerHTML = '';
+      }
+
+      if (sendLoading && container) {
+        lottie.loadAnimation({
+          ...loadingAnimationOptions,
+          container,
+        });
+      }
+  }, [sendLoading]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView();
   }, [data]);
 
+
+  const sendMessage = async () => {
+    setSendLoading(true);
+    try {
+      const newMessageData = {
+        content: message,
+      };
+
+      const response = await apiClient.post('/messages/' + userState.id + '/' + chat?.id, newMessageData);
+      if (response.status === 201 && response.data.status === 'success') {
+        dispatch(setLastMessage(response.data.data.lastMessage));
+        setData([...data, response.data.data.lastMessage]);
+        console.log("Message sent");
+      } else {
+        console.log("Failed to send message");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setMessage("");
+      setSendLoading(false);
+    }
+  }
 
   const isSameDay = (date1: Date, date2: Date): boolean => {
     return date1.toDateString() === date2.toDateString();
@@ -177,20 +229,33 @@ export default function ChatPopup(props: ChatPopupProps) {
       </div>
 
       {/* Chat Input */}
-      <div className="flex items-center justify-center shadow-md border-t-2">
+      <div className="flex items-center justify-center shadow-md border-t-2 relative">
+
+        {/* Loading */}
+        {sendLoading && 
+          <div className="absolute flex items-center bg-stickers-100 top-[-60px] w-[92%] h-16 rounded-lg lato-regular">
+            <div className="mx-5 mr-8 w-[40px] h-[40px] z-50" ref={animationChatContainerRef}></div>
+            <p>
+              Please wait while we send your message...
+            </p>
+          </div>
+        }
+
         <input 
           type="text" 
           placeholder="Type a new message"
           className="w-full bg-white px-3 py-2 m-5 border-2 border-primary-gray rounded-lg lato-regular focus:outline-none" 
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
         <div className="mr-5">
           <div className="hidden sm:block">
-            <Button width="100" onClick={() => {}}>
+            <Button width="100" onClick={() => sendMessage()}>
               Send
             </Button>
           </div>
           <div className="block sm:hidden">
-            <Button width="70" onClick={() => {}}>
+            <Button width="70" onClick={() => sendMessage()}>
               &gt;
             </Button>
           </div>

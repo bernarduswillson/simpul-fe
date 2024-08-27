@@ -131,7 +131,7 @@ export default function MessageList(props: MessageListProps) {
 
   return (
     <div
-      className={`flex flex-col pb-5 overflow-hidden w-full px-8 ${
+      className={`flex flex-col pb-3 overflow-hidden w-full px-8 ${
         isCurrentUser ? "items-end" : "items-start"
       }`}
     >

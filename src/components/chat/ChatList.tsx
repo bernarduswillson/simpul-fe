@@ -57,7 +57,7 @@ export default function ChatList(props: ChatListProps) {
       {/* Chat Content */}
       <div className="flex-1 min-w-0 text-start">
         <h1 className="text-primary-blue lato-bold text-lg">{chat.name}</h1>
-        {chat.participants.length > 2 && chat.lastMessage && (
+        {chat.participants.length > 2 && chat.lastMessage && chat.lastMessage.user && chat.lastMessage.user.name && (
           <p className="text-primary-black lato-bold text-md">{chat.lastMessage.user.name} :</p>
         )}
         <div className="w-full overflow-hidden">
@@ -81,7 +81,7 @@ export default function ChatList(props: ChatListProps) {
         )}
 
         {/* Notification */}
-        {chat.lastMessage && chat.lastMessage.readBy.filter((participant) => participant.id === userState.id).length === 0 && userState.id !== chat.lastMessage.user.id && (
+        {chat.lastMessage &&  chat.lastMessage.user &&  chat.lastMessage.user.id && chat.lastMessage.readBy.filter((participant) => participant.id === userState.id).length === 0 && userState.id !== chat.lastMessage.user.id && (
           <div className="absolute bottom-[17px] right-0 w-2 h-2 rounded-full bg-indicator-red"></div>
         )}
       </div>
