@@ -29,9 +29,12 @@ export const chatSlice = createSlice({
 
       // sort chats
       state.value.data.sort((a, b) => {
-        const dateA = new Date(a.lastMessage.createdAt);
-        const dateB = new Date(b.lastMessage.createdAt);
-        return dateB.getTime() - dateA.getTime();
+        if (a.lastMessage && b.lastMessage) {
+          const dateA = new Date(a.lastMessage.createdAt);
+          const dateB = new Date(b.lastMessage.createdAt);
+          return dateB.getTime() - dateA.getTime();
+        }
+        return -1;
       });
 
       state.value.filteredData = state.value.data;
@@ -51,8 +54,42 @@ export const chatSlice = createSlice({
         chat.name.toLowerCase().includes(searchTerm)
       );
     },
+
+    // Set Last Message
+    setLastMessage: (
+      state,
+      action: PayloadAction<{
+        chatId: string;
+        user: { id: string; name: string };
+        content: string;
+        createdAt: string;
+        isUpdated: boolean;
+        readBy: Array<{ id: string; name: string }>;
+      }>
+    ) => {
+      if (action.payload) {
+        const chatIndex = state.value.data.findIndex(
+          (chat) => chat.id === action.payload.chatId
+        );
+        if (chatIndex !== -1) {
+          state.value.data[chatIndex].lastMessage = action.payload;
+
+          // sort chats
+          state.value.data.sort((a, b) => {
+            if (a.lastMessage && b.lastMessage) {
+              const dateA = new Date(a.lastMessage.createdAt);
+              const dateB = new Date(b.lastMessage.createdAt);
+              return dateB.getTime() - dateA.getTime();
+            }
+            return -1;
+          });
+
+          state.value.filteredData = state.value.data;
+        }        
+      }
+    },
   },
 });
 
-export const { setChats, setLoading, searchChats } = chatSlice.actions;
+export const { setChats, setLoading, searchChats, setLastMessage } = chatSlice.actions;
 export default chatSlice.reducer;

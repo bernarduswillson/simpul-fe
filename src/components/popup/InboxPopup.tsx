@@ -53,6 +53,7 @@ export default function InboxPopup(props: InboxPopupProps) {
           try {
             const response = await apiClient.get('/chats/' + userState.id);
             if (response.status === 200 && response.data.status === 'success') {
+              console.log(response.data.data);
               dispatch(setChats(response.data.data));
               // dispatch(setChats([...response.data.data, ...response.data.data, ...response.data.data]));
             } else {

@@ -12,22 +12,51 @@ import SearchBar from "@/components/input/SearchBar";
 import CornerButton from "@/components/button/CornerButton";
 import InboxPopup from "@/components/popup/InboxPopup";
 import TaskPopup from "@/components/popup/TaskPopup";
+import Button from "@/components/button/Button";
+
+// Api
+import apiClient from "@/api/apiClient";
 
 
 export default function Home() {
   // State
   const [active, setActive] = useState<"task" | "inbox" | "none">("none");
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Handlers
   const handleButtonClick = (clicked: "task" | "inbox" | "none") => {
     setActive(clicked);
   };
 
+  const resetData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get('/reset');
+      if (response.status === 200 && response.data.status === 'success') {
+        console.log("Data reset");
+      } else {
+        console.log("Failed to reset data");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      window.location.reload();
+    }
+  }
+
   return (
     <div className="relative flex bg-background h-screen w-screen overflow-hidden">
       {/* Sidebar */}
       <div className={`h-screen relative border-r-[1px] border-white flex justify-end items-center transition-all duration-300 ${isSidebarOpen ? 'w-[256px]' : 'w-[60px]'}`}>
+        <div className="absolute right-[60px] overflow-hidden">
+          <Button 
+            variant="secondary"
+            onClick={resetData}
+          >
+            Reset Data
+          </Button>
+        </div>
         <button 
           className={`h-12 w-12 relative flex justify-center items-center rounded-full bg-primary-black translate-x-6 cursor-pointer transition-all duration-300 ${isSidebarOpen ? "rotate-180" : "rotate-0"} ${active !== 'none' ? 'z-[1]' : 'z-30'}`}
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -56,6 +85,11 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Loading */}
+      {loading && <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center lato-bold text-xl">
+        <p className="text-white">Loading...</p>
+      </div>}
     </div>
   );
 }

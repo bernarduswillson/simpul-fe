@@ -41,20 +41,22 @@ export default function ChatPopup(props: ChatPopupProps) {
   // States
   const animationContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
   const userState = useAppSelector((state) => state.user.value);
   const [data, setData] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isChanged, setIsChangedState] = useState<boolean | null>(null);
 
   // Hooks
   useEffect(() => {
     if (chat && chat.id && userState.id) {
+      setIsChangedState(null);
+      setLoading(true);
       const fetchMessages = async () => {
-        setLoading(true);
         try {
           const response = await apiClient.get('/messages/' + chat.id);
           if (response.status === 200 && response.data.status === 'success') {
             setData(response.data.data);
-            console.log(response.data.data)
           } else {
             setData([]);
           }
@@ -68,10 +70,14 @@ export default function ChatPopup(props: ChatPopupProps) {
 
       fetchMessages();
     }
-  }, [chat, userState.id]);
+  }, [chat, userState.id, isChanged]);
 
   useEffect(() => {
     const container = animationContainerRef.current;
+
+    if (container) {
+      container.innerHTML = '';
+    }
 
     if (loading && container) {
       lottie.loadAnimation({
@@ -109,7 +115,7 @@ export default function ChatPopup(props: ChatPopupProps) {
       {/* Navigation Bar */}
       <div className="flex h-[90px] justify-between bg-white shadow-md">
         <div className="w-[70px] flex justify-center items-center">
-          <button className="p-3" onClick={onClose}>
+          <button className="p-3 hover:scale-110 transition-all duration-300" onClick={onClose}>
             <LeftArrowIcon width={20} height={20} fillColor="#000" />
           </button>
         </div>
@@ -126,7 +132,7 @@ export default function ChatPopup(props: ChatPopupProps) {
           }
         </div>
         <div className="w-[70px] flex justify-center items-center">
-          <button className="p-3" onClick={onClose}>
+          <button className="p-3 hover:scale-110 transition-all duration-300" onClick={onClose}>
             <ExitIcon width={20} height={20} fillColor="#000"/>
           </button>
         </div>
@@ -148,7 +154,7 @@ export default function ChatPopup(props: ChatPopupProps) {
                 !isSameDay(new Date(data[index - 1].createdAt), new Date(message.createdAt));
 
               return (
-                <div key={message.id} className="relative flex first:mt-5">
+                <div key={message.id} className="relative flex first:mt-5 last:mb-[20px]">
                   <div className="w-full relative">
                     {showDateSeparator && (
                       <div className="relative text-center text-primary-black lato-bold text-lg py-2">
@@ -160,7 +166,7 @@ export default function ChatPopup(props: ChatPopupProps) {
                         </span>
                       </div>
                     )}
-                    <MessageList message={message} />
+                    <MessageList message={message} onChange={(type) => setIsChangedState(type)} />
                   </div>
                 </div>
               );
