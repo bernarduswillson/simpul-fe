@@ -2,7 +2,7 @@
 import ChatProfileImage from "@/components/profile/ChatProfileImage";
 
 // Hooks
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector, useAppDispatch } from "@/redux/store";
 
 // Interface
 import Chat from "@/interfaces/chat";
@@ -17,6 +17,7 @@ export default function ChatList(props: ChatListProps) {
   const { chat, onClick } = props;
 
   // States
+  const dispatch = useAppDispatch(); 
   const userState = useAppSelector((state) => state.user.value);
 
   const parseDate = (date: string): string => {
@@ -46,8 +47,11 @@ export default function ChatList(props: ChatListProps) {
 
   return (
     <button 
+      key={chat.id}
       className="flex gap-2 md:gap-5 w-[90%] relative items-center justify-between border-b border-primary-gray py-3 pb-8 hover:scale-[1.02] transition-all duration-300"
-      onClick={() => handleClick(chat.id)}
+      onClick={() => {
+        handleClick(chat.id);
+      }}
     >
       {/* Profile Image */}
       <div className="h-full mt-2">
@@ -81,7 +85,7 @@ export default function ChatList(props: ChatListProps) {
         )}
 
         {/* Notification */}
-        {chat.lastMessage &&  chat.lastMessage.user &&  chat.lastMessage.user.id && chat.lastMessage.readBy.filter((participant) => participant.id === userState.id).length === 0 && userState.id !== chat.lastMessage.user.id && (
+        {chat.lastMessage && chat.lastMessage.user &&  chat.lastMessage.user.id && chat.lastMessage.readBy.filter((participant) => participant.id === userState.id).length === 0 && userState.id !== chat.lastMessage.user.id && (
           <div className="absolute bottom-[17px] right-0 w-2 h-2 rounded-full bg-indicator-red"></div>
         )}
       </div>

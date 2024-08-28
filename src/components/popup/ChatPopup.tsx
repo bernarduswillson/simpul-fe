@@ -64,32 +64,49 @@ export default function ChatPopup(props: ChatPopupProps) {
 
   // Hooks
   useEffect(() => {
-    if (chat && chat.id && userState.id) {
-      if (!isChanged) {
-        setLoading(true);
-      }
-      const fetchMessages = async () => {
-        try {
-          const response = await apiClient.get('/messages/' + chat.id);
-          if (response.status === 200 && response.data.status === 'success') {
-            setData(response.data.data);
-            console.log(response.data.data);
-            setUnreadIndex(findFirstUnread(response.data.data));
-          } else {
-            setData([]);
-          }
-        } catch (error) {
-          setData([]);
-          console.error(error);
-        } finally {
-          setIsChangedState(null);
-          setLoading(false);
-        }
-      };
+    const fetchMessages = async () => {
+      if (!chat || !chat.id || !userState.id) return;
 
-      fetchMessages();
+      setLoading(true);
+
+      try {
+        const response = await apiClient.get(`/messages/${chat.id}`);
+        if (response.status === 200 && response.data.status === 'success') {
+          setData(response.data.data);
+          setUnreadIndex(findFirstUnread(response.data.data));
+        } else {
+          setData([]);
+        }
+      } catch (error) {
+        setData([]);
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [chat, userState.id, dispatch]);
+
+  const readMessages = async () => {
+    if (!chat || !userState.id) return;
+
+    try {
+      const response = await apiClient.put(`/messages/${chat.id}/read/${userState.id}`);
+      if (response.status === 200 && response.data.status === 'success') {
+        dispatch(setLastMessage(response.data.data.lastMessage));
+      } else {
+        console.log("Failed to read messages");
+      }
+    } catch (error) {
+      console.error(error);
     }
-  }, [chat, userState.id, isChanged]);
+  };
+
+  const handleClose = () => {
+    readMessages();
+    onClose();
+  }
 
   useEffect(() => {
     const container = animationContainerRef.current;
@@ -122,9 +139,10 @@ export default function ChatPopup(props: ChatPopupProps) {
   }, [sendLoading]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView();
+    if (data.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [data]);
-
 
   const sendMessage = async () => {
     setSendLoading(true);
@@ -183,7 +201,7 @@ export default function ChatPopup(props: ChatPopupProps) {
       {/* Navigation Bar */}
       <div className="flex h-[90px] justify-between bg-white shadow-md">
         <div className="w-[70px] flex justify-center items-center">
-          <button className="p-3 hover:scale-110 transition-all duration-300" onClick={onClose}>
+          <button className="p-3 hover:scale-110 transition-all duration-300" onClick={handleClose}>
             <LeftArrowIcon width={20} height={20} fillColor="#000" />
           </button>
         </div>
@@ -199,10 +217,10 @@ export default function ChatPopup(props: ChatPopupProps) {
             )
           }
         </div>
-        <div className="w-[70px] flex justify-center items-center">
-          <button className="p-3 hover:scale-110 transition-all duration-300" onClick={onClose}>
+        <div className="w-[25px] flex justify-center items-center">
+          {/* <button className="p-3 hover:scale-110 transition-all duration-300" onClick={handleClose}>
             <ExitIcon width={20} height={20} fillColor="#000"/>
-          </button>
+          </button> */}
         </div>
       </div>
       
