@@ -10,7 +10,7 @@ import FlyoutLink from "@/components/dialogue/FlyoutLink";
 // Interface
 interface EditMessageButtonProps {
   type?: "left" | "right";
-  onClick?: (type: "edit" | "delete") => void;
+  onClick?: (type: "edit" | "delete" | "all" | "personal" | "urgent") => void;
 }
 
 export default function EditMessageButton(props: EditMessageButtonProps) {
@@ -29,7 +29,7 @@ export default function EditMessageButton(props: EditMessageButtonProps) {
 // Interface
 interface EditMessageFlyoutProps {
   type?: "left" | "right";
-  onClick?: (type: "edit" | "delete") => void;
+  onClick?: (type: "edit" | "delete" | "all" | "personal" | "urgent") => void;
 }
 
 const EditMessageFlyout = (props: EditMessageFlyoutProps) => {

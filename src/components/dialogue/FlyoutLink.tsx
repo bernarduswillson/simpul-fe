@@ -5,9 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 // Interface
 interface FlyoutLinkProps {
   children: ReactNode;
-  FlyoutContent: (props: { type: "left" | "right", onClick?: (type: "edit" | "delete") => void }) => JSX.Element
+  FlyoutContent: (props: { type: "left" | "right", onClick?: (type: "edit" | "delete" | "all" | "personal" | "urgent") => void }) => JSX.Element
   type: "left" | "right";
-  onClick?: (type: "edit" | "delete") => void;
+  onClick?: (type: "edit" | "delete" | "all" | "personal" | "urgent") => void;
 }
 
 const FlyoutLink = (props: FlyoutLinkProps): JSX.Element => {
@@ -33,7 +33,7 @@ const FlyoutLink = (props: FlyoutLinkProps): JSX.Element => {
   }, [flyoutRef]);
 
   return (
-    <div className="relative w-full h-full" onClick={() => setOpen(!open)}>
+    <div className="relative w-full h-full z-50" onClick={() => setOpen(!open)}>
       <div className="flex items-center justify-center w-full h-full">
         {children}
       </div>

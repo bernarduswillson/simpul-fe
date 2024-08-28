@@ -5,12 +5,14 @@ import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 // Reducers
 import userReducers from "@/redux/reducers/userSlice";
 import chatReducers from "@/redux/reducers/chatSlice";
+import taskReducers from "@/redux/reducers/taskSlice";
 
 
 export const store = configureStore({
   reducer: {
     user: userReducers,
     chat: chatReducers,
+    task: taskReducers,
   },
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware( { serializableCheck: false } 

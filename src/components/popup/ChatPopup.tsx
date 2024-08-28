@@ -262,7 +262,7 @@ export default function ChatPopup(props: ChatPopupProps) {
                             </span>
                             </div>
                             )}
-                    {/* here */}
+                    {/* Message List */}
                     <MessageList message={message} onChange={(type) => setIsChangedState(type)} />
                   </div>
                 </div>
