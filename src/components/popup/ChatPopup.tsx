@@ -60,17 +60,21 @@ export default function ChatPopup(props: ChatPopupProps) {
   const [sendLoading, setSendLoading] = useState(false);
   const [isChanged, setIsChangedState] = useState<boolean | null>(null);
   const [message, setMessage] = useState("");
+  const [unreadIndex, setUnreadIndex] = useState(-1);
 
   // Hooks
   useEffect(() => {
     if (chat && chat.id && userState.id) {
-      setIsChangedState(null);
-      setLoading(true);
+      if (!isChanged) {
+        setLoading(true);
+      }
       const fetchMessages = async () => {
         try {
           const response = await apiClient.get('/messages/' + chat.id);
           if (response.status === 200 && response.data.status === 'success') {
             setData(response.data.data);
+            console.log(response.data.data);
+            setUnreadIndex(findFirstUnread(response.data.data));
           } else {
             setData([]);
           }
@@ -78,6 +82,7 @@ export default function ChatPopup(props: ChatPopupProps) {
           setData([]);
           console.error(error);
         } finally {
+          setIsChangedState(null);
           setLoading(false);
         }
       };
@@ -162,6 +167,17 @@ export default function ChatPopup(props: ChatPopupProps) {
     return `${month} ${day}, ${year}`;
   }
 
+  const findFirstUnread = (messages: Message[]): number => {
+    for (let i = 0; i < messages.length; i++) {
+      const isRead = messages[i].readBy.some(reader => reader.id === userState.id);
+      if (!isRead && messages[i].user.id !== userState.id) {
+        return i;
+      }
+    }
+  
+    return -1;
+  };
+
   return (
     <div className="relative bg-white h-full w-full rounded-lg flex flex-col justify-between">
       {/* Navigation Bar */}
@@ -218,6 +234,17 @@ export default function ChatPopup(props: ChatPopupProps) {
                         </span>
                       </div>
                     )}
+                    {unreadIndex === index && (
+                      <div className="relative text-center text-indicator-red lato-bold text-lg py-2">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-indicator-red mx-8"></div>
+                          </div>
+                          <span className="relative z-10 bg-white px-5">
+                            Unread Messages
+                            </span>
+                            </div>
+                            )}
+                    {/* here */}
                     <MessageList message={message} onChange={(type) => setIsChangedState(type)} />
                   </div>
                 </div>

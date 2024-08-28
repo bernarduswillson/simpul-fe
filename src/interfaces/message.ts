@@ -7,5 +7,5 @@ export default interface Message {
   content: string;
   createdAt: string;
   isUpdated: boolean;
-  readBy: Array<{ id: string; name: string }>;
+  readBy: Array<{ id: string; name: string }>
 }
