@@ -190,14 +190,14 @@ export default function MessageList(props: MessageListProps) {
         <div>
           <div className='flex gap-7'>
             <Button
-              width='150'
+              width='120'
               onClick={() => handleEditMessage()}
             >
               Edit
             </Button>
             <Button
               variant="secondary"
-              width='150'
+              width='120'
               onClick={() => setIsEditModalOpen(false)}
             >
               Cancel
@@ -218,14 +218,14 @@ export default function MessageList(props: MessageListProps) {
           <div className='flex gap-7'>
             <Button
               variant="warning"
-              width='150'
+              width='120'
               onClick={() => handleDeleteMessage()}
             >
               Delete
             </Button>
             <Button
               variant="secondary"
-              width='150'
+              width='120'
               onClick={() => setIsDeleteModalOpen(false)}
             >
               Cancel

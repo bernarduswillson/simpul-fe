@@ -29,6 +29,7 @@ export default function TaskList(props: TaskListProps) {
   // States
   const dispatch = useAppDispatch();
   const [isDropdownVisible, setIsDropdownVisible] = useState(task.isDone ? false : true);
+  const filter = useAppSelector((state) => state.task.value.filter);
   const [maxHeight, setMaxHeight] = useState("0px");
   const [isChecked, setIsChecked] = useState(task.isDone);
   const [selectedDate, setSelectedDate] = useState(task.date);
@@ -43,7 +44,7 @@ export default function TaskList(props: TaskListProps) {
     return () => {
       window.removeEventListener("resize", updateMaxHeight);
     };
-  }, [isDropdownVisible, isEditing]);
+  }, [isDropdownVisible, isEditing, filter]);
 
   useEffect(() => {
     try {
