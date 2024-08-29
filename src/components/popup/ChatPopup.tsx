@@ -140,11 +140,13 @@ export default function ChatPopup(props: ChatPopupProps) {
 
   useEffect(() => {
     if (data.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current?.scrollIntoView({});
     }
   }, [data]);
 
   const sendMessage = async () => {
+    if (message === "" || !chat || !userState.id) return;
+    
     setSendLoading(true);
     try {
       const newMessageData = {
@@ -278,7 +280,7 @@ export default function ChatPopup(props: ChatPopupProps) {
 
         {/* Loading */}
         {sendLoading && 
-          <div className="absolute flex items-center bg-stickers-100 top-[-60px] w-[92%] h-16 rounded-lg lato-regular">
+          <div className="absolute flex items-center border-[1px] border-primary-gray bg-stickers-100 top-[-60px] w-[92%] h-16 rounded-lg lato-regular">
             <div className="mx-5 mr-8 w-[40px] h-[40px] z-50" ref={animationChatContainerRef}></div>
             <p>
               Please wait while we send your message...
@@ -292,6 +294,7 @@ export default function ChatPopup(props: ChatPopupProps) {
           className="w-full bg-white px-3 py-2 m-5 border-2 border-primary-gray rounded-lg lato-regular focus:outline-none" 
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <div className="mr-5">
           <div className="hidden sm:block">

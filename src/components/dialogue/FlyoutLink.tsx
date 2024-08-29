@@ -33,7 +33,7 @@ const FlyoutLink = (props: FlyoutLinkProps): JSX.Element => {
   }, [flyoutRef]);
 
   return (
-    <div className="relative w-full h-full z-50" onClick={() => setOpen(!open)}>
+    <div className="relative w-full h-full z-10" onClick={() => setOpen(!open)}>
       <div className="flex items-center justify-center w-full h-full">
         {children}
       </div>
