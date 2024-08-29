@@ -18,7 +18,7 @@ interface CalendarProps {
 export default function Calendar(props: CalendarProps) {
   const { date, isOpen, onClose, onDateSelect, startWeekOnSunday = true, primaryColor = 'text-black', todayColor = 'bg-gray-200' } = props;
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date(date));
+  const [selectedDate, setSelectedDate] = useState<Date | null>(date === "" ? new Date() : new Date(date));
 
   const initialDate = selectedDate || new Date();
   const [currentDate, setCurrentDate] = useState(initialDate);

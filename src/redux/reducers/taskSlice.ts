@@ -30,41 +30,39 @@ const sortTasks = (tasks: Task[], currentDate: Date): Task[] => {
       return a.isDone ? 1 : -1;
     }
 
-    if (!a.isDone && !b.isDone) {
-      if (dateA && dateB) {
-        const isAPast = dateA < currentDate;
-        const isBPast = dateB < currentDate;
+    const noDateA = !dateA || isNaN(dateA.getTime());
+    const noDateB = !dateB || isNaN(dateB.getTime());
 
-        if (isAPast && isBPast) {
-          return dateB.getTime() - dateA.getTime()
-        }
-
-        if (isAPast) return 1;
-        if (isBPast) return -1;
-
-        return dateA.getTime() - dateB.getTime();
-      }
-
-      if (dateA) return -1;
-      if (dateB) return 1;
-
+    if (noDateA && noDateB) {
       return 0;
     }
 
-    if (a.isDone && b.isDone) {
-      if (dateA && dateB) {
+    if (noDateA) {
+      return a.isDone ? 1 : -1;
+    }
+
+    if (noDateB) {
+      return b.isDone ? -1 : 1;
+    }
+
+    if (dateA && dateB) {
+      const isAPast = dateA < currentDate;
+      const isBPast = dateB < currentDate;
+
+      if (isAPast && isBPast) {
         return dateB.getTime() - dateA.getTime();
       }
 
-      if (dateA) return -1;
-      if (dateB) return 1;
+      if (isAPast) return 1;
+      if (isBPast) return -1;
 
-      return 0;
+      return dateA.getTime() - dateB.getTime();
     }
 
     return 0;
   });
 };
+
 
 const applyFilter = (tasks: Task[], filter: string): Task[] => {
   if (filter === 'all') {
@@ -100,6 +98,16 @@ export const taskSlice = createSlice({
       state.value.filter = filterType;
 
       state.value.filteredData = applyFilter(state.value.data, filterType);
+    },
+
+    setName: (state, action: PayloadAction<{ id: string, name: string }>) => {
+      const { id, name } = action.payload;
+      const taskIndex = state.value.data.findIndex((task) => task.id === id);
+      if (taskIndex !== -1) {
+        state.value.data[taskIndex].name = name;
+      }
+
+      state.value.filteredData = applyFilter(state.value.data, state.value.filter);
     },
 
     // Set isDone
@@ -149,5 +157,5 @@ export const taskSlice = createSlice({
   },
 });
 
-export const { setTasks, setLoading, setFilter, setIsDone, setDate, setDescription, deleteTask } = taskSlice.actions;
+export const { setTasks, setLoading, setFilter, setName, setIsDone, setDate, setDescription, deleteTask } = taskSlice.actions;
 export default taskSlice.reducer;

@@ -5,9 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 // Interface
 interface FlyoutLinkProps {
   children: ReactNode;
-  FlyoutContent: (props: { type?: "left" | "right", onClick?: (type: "edit" | "delete") => void }) => JSX.Element
-  type?: "left" | "right";
-  onClick?: (type: "edit" | "delete") => void;
+  FlyoutContent: (props: { type?: string, onClick?: (type: string) => void }) => JSX.Element
+  type?: string
+  onClick?: (type: string) => void;
 }
 
 const FlyoutLink = (props: FlyoutLinkProps): JSX.Element => {

@@ -17,7 +17,7 @@ import Button from "@/components/button/Button";
 // Hooks
 import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
-import { setTasks, setLoading, setIsDone, setDate, setDescription, deleteTask } from '@/redux/reducers/taskSlice';
+import { setTasks, setLoading, setName, setIsDone, setDate, setDescription, deleteTask } from '@/redux/reducers/taskSlice';
 
 // Interface
 import Task from "@/interfaces/task";
@@ -37,12 +37,13 @@ export default function TaskList(props: TaskListProps) {
   const [maxHeight, setMaxHeight] = useState("0px");
   const [isChecked, setIsChecked] = useState(task.isDone);
   const [selectedDate, setSelectedDate] = useState(task.date);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [desc, setDesc] = useState(task.description);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [title, setTitle] = useState(task.name);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleDeleteTaskButton = async(type: "edit" | "delete") => {
+  const handleDeleteTaskButton = async(type: string) => {
     if (type === "delete") {
       setIsDeleteModalOpen(true);
     }
@@ -92,7 +93,7 @@ export default function TaskList(props: TaskListProps) {
     return () => {
       window.removeEventListener("resize", updateMaxHeight);
     };
-  }, [isDropdownVisible, isEditing, filter]);
+  }, [isDropdownVisible, isEditingDesc, filter]);
 
 
   const updateMaxHeight = (): void => {
@@ -102,7 +103,7 @@ export default function TaskList(props: TaskListProps) {
   };
 
   const handleDescriptionSubmit = () => {
-    setIsEditing(false);
+    setIsEditingDesc(false);
     const editDescription = async () => {
       try {
         const newDescription = {
@@ -126,6 +127,8 @@ export default function TaskList(props: TaskListProps) {
   };
 
   const handleCheck = async () => {
+    if (task.name === "") return;
+
     if (!isChecked) {
       setIsDropdownVisible(false);
     }
@@ -147,6 +150,27 @@ export default function TaskList(props: TaskListProps) {
       console.error(error);
     }
   }
+
+  const handleTitleSubmit = async () => {
+    if (title === "") return;
+
+    try {
+      const newTitle = {
+        name: title,
+      };
+
+      const response = await apiClient.put(`/tasks/${task.id}`, newTitle);
+      if (response.status === 200 && response.data.status === 'success') {
+        console.log("Task updated");
+        dispatch(setName({ id: task.id, name: title }));
+      } else {
+        console.log("Failed to update task");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
   const parseDate = (date: string): string => {
     const newDate = new Date(date);
@@ -184,16 +208,28 @@ export default function TaskList(props: TaskListProps) {
             onChange={handleCheck}
           />
           <div className="ml-5 flex-1 cursor-pointer" onClick={handleCheck}>
-            <p
-              className={`lato-bold text-black transition-all duration-300 ${isChecked ? "line-through text-gray-500" : ""}`}
-            >
-              {task.name}
-            </p>
+            { task.name === "" ? (
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onBlur={handleTitleSubmit}
+                onKeyDown={(e) => e.key === "Enter" && handleTitleSubmit()}
+                placeholder="Type Task Title"
+                className="flex translate-y-[-6px] w-full border-2 border-gray-400 rounded-md p-2 lato-bold text-black leading-[18px] hover:border-primary-blue transition-all duration-200"
+              />
+            ) : (
+              <p
+                className={`lato-bold text-black transition-all duration-300 ${isChecked ? "line-through text-gray-500" : ""}`}
+              >
+                {task.name}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex items-start justify-end w-[80px] md:w-[450px]">
-          <p className={`lato-bold text-indicator-red text-md hidden md:block transition-all duration-300 mt-[2px] ${isChecked ? 'opacity-0' : 'opacity-100'}`}>{calculateDate(task.date)}</p>
-          <p className="lato-regular text-black ml-5 text-md hidden md:block mt-[2px]">{parseDate(task.date)}</p>
+          <p className={`lato-bold text-indicator-red text-md hidden md:block transition-all duration-300 mt-[2px] ${isChecked || selectedDate === "" ? 'opacity-0' : 'opacity-100'}`}>{calculateDate(task.date)}</p>
+          <p className={`lato-regular text-black ml-5 text-md hidden md:block mt-[2px] ${selectedDate === "" ? 'opacity-0' : 'opacity-100'}`}>{parseDate(task.date)}</p>
           <Image
             src={chevronDownIcon}
             alt="Chevron Down Icon"
@@ -223,8 +259,8 @@ export default function TaskList(props: TaskListProps) {
 
         {/* Description */}
         <div className="flex items-start mt-3">
-          <Image src={descriptionIcon} alt="Description Icon" width={17} height={17} />
-          {isEditing ? (
+          <Image src={descriptionIcon} alt="Description Icon" width={17} height={17} className="translate-y-[4px]"/>
+          {isEditingDesc ? (
             <textarea
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
@@ -235,7 +271,7 @@ export default function TaskList(props: TaskListProps) {
               rows={3}
             />
           ) : (
-            <p className="lato-regular text-primary-black leading-[18px] ml-5 p-1 cursor-pointer" onClick={() => setIsEditing(true)}>
+            <p className="lato-regular text-primary-black leading-[18px] ml-5 p-1 cursor-pointer" onClick={() => setIsEditingDesc(true)}>
               {desc === "" ? "No Description" : desc}
             </p>
           )}

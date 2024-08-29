@@ -23,6 +23,8 @@ export default function CalendarButton(props: CalendarButtonProps) {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
   const parseDate = (date: string): string => {
+    if (!date) return "Set Date";
+
     const newDate = new Date(date);
 
     const day = String(newDate.getDate()).padStart(2, "0");
@@ -36,7 +38,7 @@ export default function CalendarButton(props: CalendarButtonProps) {
     <div className="relative">
       {/* Button */}
       <button
-        className="flex border-2 border-gray-400 rounded-md p-2 lato-regular text-black leading-[18px] ml-5 hover:border-primary-blue transition-all duration-200"
+        className="flex border-2 border-gray-400 rounded-md p-2 lato-regular text-primary-black leading-[18px] ml-5 hover:border-primary-blue transition-all duration-200"
         onClick={() => setIsCalendarVisible(!isCalendarVisible)}
       >
         {parseDate(date)}

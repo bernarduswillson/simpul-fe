@@ -9,7 +9,7 @@ import FlyoutLink from "@/components/dialogue/FlyoutLink";
 
 // Interface
 interface DeleteTaskButtonProps {
-  onClick?: (type: "edit" | "delete") => void;
+  onClick?: (type: string) => void;
 }
 
 export default function DeleteTaskButton(props: DeleteTaskButtonProps) {
@@ -27,7 +27,7 @@ export default function DeleteTaskButton(props: DeleteTaskButtonProps) {
 
 // Interface
 interface DeleteTaskFlyoutProps {
-  onClick?: (type: "edit" | "delete") => void;
+  onClick?: (type: string) => void;
 }
 
 const DeleteTaskFlyout = (props: DeleteTaskFlyoutProps) => {
