@@ -39,6 +39,29 @@ export default function TaskList(props: TaskListProps) {
 
   // Hooks
   useEffect(() => {
+    const editDate = async () => {
+      try {
+        const newDate = {
+          date: selectedDate,
+        };
+
+        const response = await apiClient.put(`/tasks/${task.id}`, newDate);
+        if (response.status === 200 && response.data.status === 'success') {
+          dispatch(setDate({ id: task.id, date: selectedDate }));
+        } else {
+          console.log("Failed to read messages");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    
+    if (selectedDate !== task.date) {
+      editDate();
+    }
+  }, [selectedDate]);
+  
+  useEffect(() => {
     updateMaxHeight();
     window.addEventListener("resize", updateMaxHeight);
     return () => {
@@ -46,14 +69,6 @@ export default function TaskList(props: TaskListProps) {
     };
   }, [isDropdownVisible, isEditing, filter]);
 
-  useEffect(() => {
-    try {
-      dispatch(setDate({ id: task.id, date: selectedDate }));
-    } catch (error) {
-      console.error(error);
-    } finally {
-    }
-  }, [selectedDate]);
 
   const updateMaxHeight = (): void => {
     if (dropdownRef.current) {
@@ -63,9 +78,27 @@ export default function TaskList(props: TaskListProps) {
 
   const handleDescriptionSubmit = () => {
     setIsEditing(false);
-    dispatch(setDescription({ id: task.id, description: desc }));
-  };
+    const editDescription = async () => {
+      try {
+        const newDescription = {
+          description: desc,
+        };
 
+        const response = await apiClient.put(`/tasks/${task.id}`, newDescription);
+        if (response.status === 200 && response.data.status === 'success') {
+          dispatch(setDescription({ id: task.id, description: desc }));
+        } else {
+          console.log("Failed to read messages");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (desc !== task.description) {
+      editDescription();
+    }
+  };
 
   const parseDate = (date: string): string => {
     const newDate = new Date(date);
