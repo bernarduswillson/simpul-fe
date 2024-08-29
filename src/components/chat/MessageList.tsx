@@ -34,7 +34,7 @@ export default function MessageList(props: MessageListProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editedMessage, setEditedMessage] = useState(message.content);
 
-  const handleEditMessageButton = async(type: "edit" | "delete" | "all" | "personal" | "urgent") => {
+  const handleEditMessageButton = async(type: "edit" | "delete") => {
     if (type === "edit") {
       setIsEditModalOpen(true);
     } else if (type === "delete") {

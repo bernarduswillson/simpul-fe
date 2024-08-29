@@ -13,7 +13,6 @@ import CornerButton from "@/components/button/CornerButton";
 import InboxPopup from "@/components/popup/InboxPopup";
 import TaskPopup from "@/components/popup/TaskPopup";
 import Button from "@/components/button/Button";
-
 // Api
 import apiClient from "@/api/apiClient";
 
@@ -81,7 +80,7 @@ export default function Home() {
             <InboxPopup isActive={active === 'inbox'} />
           </div>
           <div className={`absolute w-full transition-all duration-300 ${active === 'task' ? 'translate-x-[0px] h-[100%] w-[100%] opacity-100' : 'translate-x-[820px] h-[0px] w-[0px] opacity-100'}`}>
-            <TaskPopup />
+            <TaskPopup isActive={active === 'task'} />
           </div>
         </div>
       </div>

@@ -1,12 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
 // Assets
-import chevronDownIcon from "@/assets/icons/chevron-down.svg";
+import chevronDownIcon from "@/assets/icons/chevron-down-ic.svg";
 import kebabMenuIcon from "@/assets/icons/kebab-menu-ic.svg";
-import calendarIcon from "@/assets/icons/calendar-ic.svg";
 import scheduleIcon from "@/assets/icons/schedule-ic.svg";
 import descriptionIcon from "@/assets/icons/description-ic.svg";
+
+// Components
+import CalendarButton from "@/components/button/CalendarButton";
+
+// Hooks
+import apiClient from "@/api/apiClient";
+import { useAppSelector, useAppDispatch } from "@/redux/store";
+import { setTasks, setLoading, setDate, setDescription } from '@/redux/reducers/taskSlice';
 
 // Interface
 import Task from "@/interfaces/task";
@@ -19,9 +27,14 @@ export default function TaskList(props: TaskListProps) {
   const { task } = props;
 
   // States
+  const dispatch = useAppDispatch();
+  const tasks = useAppSelector((state) => state.task.value.data);
   const [isDropdownVisible, setIsDropdownVisible] = useState(task.isDone ? false : true);
   const [maxHeight, setMaxHeight] = useState("0px");
   const [isChecked, setIsChecked] = useState(task.isDone);
+  const [selectedDate, setSelectedDate] = useState(task.date);
+  const [isEditing, setIsEditing] = useState(false);
+  const [desc, setDesc] = useState(task.description);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Hooks
@@ -31,13 +44,28 @@ export default function TaskList(props: TaskListProps) {
     return () => {
       window.removeEventListener("resize", updateMaxHeight);
     };
-  }, [isDropdownVisible]);
+  }, [isDropdownVisible, isEditing]);
+
+  useEffect(() => {
+    try {
+      dispatch(setDate({ id: task.id, date: selectedDate }));
+    } catch (error) {
+      console.error(error);
+    } finally {
+    }
+  }, [selectedDate]);
 
   const updateMaxHeight = (): void => {
     if (dropdownRef.current) {
       setMaxHeight(isDropdownVisible ? `${dropdownRef.current.scrollHeight}px` : "0px");
     }
   };
+
+  const handleDescriptionSubmit = () => {
+    setIsEditing(false);
+    dispatch(setDescription({ id: task.id, description: desc }));
+  };
+
 
   const parseDate = (date: string): string => {
     const newDate = new Date(date);
@@ -63,12 +91,8 @@ export default function TaskList(props: TaskListProps) {
     return `${diffDays} Days Left`;
   };
 
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
-  };
-
   return (
-    <div className="relative flex flex-col border-b-[2px] border-gray-300 px-5 pt-3 pb-4 overflow-hidden">
+    <div className="relative flex flex-col border-b-[2px] border-gray-300 px-5 py-3 overflow-hidden">
       {/* Header */}
       <div className="flex justify-between items-start">
         <div className="flex w-full">
@@ -76,9 +100,9 @@ export default function TaskList(props: TaskListProps) {
             type="checkbox"
             className="w-[15px] h-[15px] mt-[5px] cursor-pointer"
             checked={isChecked}
-            onChange={handleCheckboxChange}
+            onChange={() => setIsChecked(!isChecked)}
           />
-          <div className="ml-5 flex-1">
+          <div className="ml-5 flex-1 cursor-pointer" onClick={() => setIsChecked(!isChecked)}>
             <p
               className={`lato-bold text-black transition-all duration-300 ${isChecked ? "line-through text-gray-500" : ""}`}
             >
@@ -110,26 +134,34 @@ export default function TaskList(props: TaskListProps) {
       {/* Dropdown Content */}
       <div
         ref={dropdownRef}
-        className={`transition-max-height ml-0 sm:ml-9 duration-500 ease-in-out overflow-hidden ${isDropdownVisible ? 'mt-3' : 'mt-0'}`}
+        className={`transition-max-height ml-0 sm:ml-9 duration-500 ease-in-out ${isDropdownVisible ? 'mt-3' : 'mt-0'}`}
         style={{ maxHeight }}
       >
+
+        {/* Date */}
         <div className="flex items-center mt-3">
           <Image src={scheduleIcon} alt="Schedule Icon" width={17} height={17} />
-          <button
-            className="flex border-2 border-gray-400 rounded-md p-2 lato-regular text-black leading-[18px] ml-5"
-            onClick={() => {}}
-          >
-            {parseDate(task.date)}
-
-            <Image src={calendarIcon} alt="Calendar Icon" width={17} height={17} className="ml-14" />
-          </button>
+          <CalendarButton date={selectedDate} onDateSelect={(date) => setSelectedDate(date)} />
         </div>
 
+        {/* Description */}
         <div className="flex items-start mt-3">
           <Image src={descriptionIcon} alt="Description Icon" width={17} height={17} />
-          <p className="lato-regular text-primary-black leading-[18px] ml-5">
-            {task.description === "" ? "No Description" : task.description}
-          </p>
+          {isEditing ? (
+            <textarea
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              onBlur={handleDescriptionSubmit}
+              onKeyDown={(e) => e.key === "Enter" && handleDescriptionSubmit()}
+              className="lato-regular text-primary-black leading-[18px] ml-5 p-1 w-full resize-none overflow-hidden bg-white focus:text-black"
+              autoFocus
+              rows={3}
+            />
+          ) : (
+            <p className="lato-regular text-primary-black leading-[18px] ml-5 p-1 cursor-pointer" onClick={() => setIsEditing(true)}>
+              {desc === "" ? "No Description" : desc}
+            </p>
+          )}
         </div>
       </div>
     </div>

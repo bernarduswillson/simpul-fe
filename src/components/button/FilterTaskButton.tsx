@@ -2,24 +2,20 @@
 import Image from "next/image";
 
 // Assets
-import chevronDownIcon from "@/assets/icons/chevron-down.svg";
+import chevronDownIcon from "@/assets/icons/chevron-down-ic.svg";
 
 // Components
 import FlyoutLink from "@/components/dialogue/FlyoutLink";
 
-// Interface
-interface FilterTaskButtonProps {
-  type?: "left" | "right";
-  onClick?: (type: "edit" | "delete" | "all" | "personal" | "urgent") => void;
-}
+// Hooks
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { setFilter } from "@/redux/reducers/taskSlice";
 
-export default function EditMessageButton(props: FilterTaskButtonProps) {
-  // Props
-  const { type = "left", onClick } = props;
 
+export default function EditMessageButton() {
   return (
     <div>
-      <FlyoutLink FlyoutContent={EditMessageFlyout} type={type} onClick={onClick}>
+      <FlyoutLink FlyoutContent={EditMessageFlyout}>
         <button className="border-2 border-primary-gray rounded-md flex items-center lato-regular px-4 py-2 group hover:translate-y-[3px] transition-all duration-300">
           My Tasks
           <Image
@@ -35,33 +31,29 @@ export default function EditMessageButton(props: FilterTaskButtonProps) {
   );
 };
 
-// Interface
-interface FilterTaskFlyoutProps {
-  type?: "left" | "right";
-  onClick?: (type: "edit" | "delete" | "all" | "personal" | "urgent") => void;
-}
 
-const EditMessageFlyout = (props: FilterTaskFlyoutProps) => {
-  // Props
-  const { type, onClick } = props;
+const EditMessageFlyout = () => {
+  // States
+  const dispatch = useAppDispatch();
+  const filter = useAppSelector((state) => state.task.value.filter);
 
   return (
-    <div className={`bg-white border-[1px] border-primary-gray rounded-lg shadow-md absolute w-[230px] ${type === "right" ? 'left-[-115px]' : 'left-[-115px]'} top-[-30px] lato-bold overflow-hidden`}>
+    <div className={`bg-white border-[1px] border-primary-gray rounded-lg shadow-md absolute w-[230px] left-[-60px] top-[-30px] lato-bold overflow-hidden`}>
       <button 
-        className="border-b-[1px] border-primary-gray w-[230px] px-5 py-2 bg-white text-black text-start hover:bg-primary-blue hover:text-white transition-all duration-200"
-        onClick={() => onClick && onClick("all")}
+        className={`border-b-[1px] border-primary-gray w-[230px] px-5 py-2 bg-white text-black text-start hover:bg-primary-blue hover:text-white transition-all duration-200 ${filter === "all" ? "text-primary-blue" : ""}`}
+        onClick={() => dispatch(setFilter("all"))}
       >
         All
       </button>
       <button 
-        className="border-b-[1px] border-primary-gray w-[230px] px-5 py-2 bg-white text-black text-start hover:bg-primary-blue hover:text-white transition-all duration-200"
-        onClick={() => onClick && onClick("personal")}
+        className={`border-b-[1px] border-primary-gray w-[230px] px-5 py-2 bg-white text-black text-start hover:bg-primary-blue hover:text-white transition-all duration-200 ${filter === "personal" ? "text-primary-blue" : ""}`}
+        onClick={() => dispatch(setFilter("personal"))}
       > 
         Personal Errands
       </button>
       <button 
-        className="border-b-[1px] border-primary-gray w-[230px] px-5 py-2 bg-white text-black text-start hover:bg-primary-blue hover:text-white transition-all duration-200"
-        onClick={() => onClick && onClick("urgent")}
+        className={`border-b-[1px] border-primary-gray w-[230px] px-5 py-2 bg-white text-black text-start hover:bg-primary-blue hover:text-white transition-all duration-200 ${filter === "urgent" ? "text-primary-blue" : ""}`}
+        onClick={() => dispatch(setFilter("urgent"))}
       >
         Urgent To-Do
       </button>

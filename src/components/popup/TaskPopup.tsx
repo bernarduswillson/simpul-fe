@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // Libs
 import Image from "next/image";
 import { useEffect } from "react";
@@ -9,78 +10,56 @@ import TaskList from "@/components/task/TaskList";
 
 // Hooks
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { setTasks, setFilter } from "@/redux/reducers/taskSlice";
+import { setTasks, setLoading, setFilter } from "@/redux/reducers/taskSlice";
+
+// Api
+import apiClient from "@/api/apiClient";
+
+// Interface
+interface TaskPopupProps {
+  isActive?: boolean;
+}
 
 
-// id
-// userId
-// name
-// date
-// description
-// type
-// isDone
-const TODO = [
-  {
-    id: 1,
-    userId: 1,
-    name: "Close off Case #012920- RODRIGUES, Amiguel",
-    date: "2024-09-24T05:19:00Z",
-    description: "Closing off this case since this application has been cancelled. No one really understand how this case could possibly be cancelled. The options and the documents within this document were totally a guaranteed for a success!",
-    type: "personal",
-    isDone: false,
-  },
-  {
-    id: 2,
-    userId: 1,
-    name: "Set up documentation report for several Cases : Case 145443, Case 192829 and Case 182203",
-    date: "2024-09-25T05:19:00Z",
-    description: "All Cases must include all payment transactions, all documents and forms filled. All conversations in comments and messages in channels and emails should be provided as well in.",
-    type: "urgent",
-    isDone: false,
-  },
-  {
-    id: 3,
-    userId: 1,
-    name: "Set up appointment with Dr Blake",
-    date: "2024-09-26T05:19:00Z",
-    description: "",
-    type: "personal",
-    isDone: false,
-  },
-  {
-    id: 4,
-    userId: 1,
-    name: "Contact Mr Caleb - video conference?",
-    date: "2024-08-24T05:19:00Z",
-    description: "This is a description",
-    type: "urgent",
-    isDone: true,
-  },
-  {
-    id: 5,
-    userId: 1,
-    name: "Assign 3 homework to Client A",
-    date: "2024-08-10T05:19:00Z",
-    description: "This is a description",
-    type: "personal",
-    isDone: true,
-  },
-];
+export default function TaskPopup(props: TaskPopupProps) {
+  // Props
+  const { isActive } = props;
 
-
-
-export default function TaskPopup() {
   // States
   const dispatch = useAppDispatch();
+  const userState = useAppSelector((state) => state.user.value);
   const { data, filteredData, loading } = useAppSelector((state) => state.task.value);
-  
+
   // Hooks
   useEffect(() => {
-    dispatch(setTasks(TODO));
-    dispatch(setFilter("all"));
-  }, []);
+    if (isActive && userState.id) {
+      if (!loading && data.length === 0) {
+        const fetchTasks = async () => {
+          dispatch(setLoading(true));
+          try {
+            const response = await apiClient.get('/tasks/' + userState.id);
+            if (response.status === 200 && response.data.status === 'success') {
+              // console.log(response.data.data);
+              dispatch(setTasks(response.data.data));
+              // dispatch(setTasks([...response.data.data, ...response.data.data, ...response.data.data]));
+            } else {
+              dispatch(setTasks([]));
+            }
+          } catch (error) {
+            dispatch(setTasks([]));
+            console.error(error);
+          } finally {
+            dispatch(setLoading(false));
+          }
+        };
+  
+        fetchTasks();
+      }
+    }
+  }, [isActive, userState.id, dispatch, data.length]);
 
   
+  if (!isActive) return null;
   return (
     <div className="relative bg-white h-full w-full rounded-lg overflow-hidden">
       {/* Navigation Bar */}
