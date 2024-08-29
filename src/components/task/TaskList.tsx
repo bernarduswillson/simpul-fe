@@ -28,7 +28,6 @@ export default function TaskList(props: TaskListProps) {
 
   // States
   const dispatch = useAppDispatch();
-  const tasks = useAppSelector((state) => state.task.value.data);
   const [isDropdownVisible, setIsDropdownVisible] = useState(task.isDone ? false : true);
   const [maxHeight, setMaxHeight] = useState("0px");
   const [isChecked, setIsChecked] = useState(task.isDone);

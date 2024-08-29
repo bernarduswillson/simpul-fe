@@ -56,7 +56,7 @@ export const taskSlice = createSlice({
         return 0;
       });
     
-      state.value.filteredData = state.value.data;
+      state.value.filteredData = [...state.value.data];
       state.value.loading = false;
     },
     
@@ -67,16 +67,18 @@ export const taskSlice = createSlice({
 
     // Set Filter
     setFilter: (state, action: PayloadAction<string>) => {
-      state.value.filter = action.payload;
-
-      if (action.payload === 'all') {
-        state.value.filteredData = state.value.data;
+      const filterType = action.payload;
+      state.value.filter = filterType;
+      
+      if (filterType === 'all') {
+        state.value.filteredData = [...state.value.data];
       } else {
-        state.value.filteredData = state.value.data.filter((task) => task.type === action.payload);
+        state.value.filteredData = state.value.data.filter((task) => task.type === filterType);
       }
+
     },
 
-    // Set Date for
+    // Set Date
     setDate: (state, action: PayloadAction<{ id: string, date: string }>) => {
       const { id, date } = action.payload;
       const taskIndex = state.value.data.findIndex((task) => task.id === id);
@@ -111,10 +113,15 @@ export const taskSlice = createSlice({
         return 0;
       });
 
-      state.value.filteredData = state.value.data;
+      // filter
+      if (state.value.filter === 'all') {
+        state.value.filteredData = [...state.value.data];
+      } else {
+        state.value.filteredData = state.value.data.filter((task) => task.type === state.value.filter);
+      }
     },
 
-    // Set Description for specific task
+    // Set Description
     setDescription: (state, action: PayloadAction<{ id: string, description: string }>) => {
       const { id, description } = action.payload;
       const taskIndex = state.value.data.findIndex((task) => task.id === id);
@@ -122,7 +129,7 @@ export const taskSlice = createSlice({
         state.value.data[taskIndex].description = description;
       }
 
-      state.value.filteredData = state.value.data;
+      state.value.filteredData = [...state.value.data];
     }
   },
 });

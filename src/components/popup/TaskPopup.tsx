@@ -75,9 +75,7 @@ export default function TaskPopup(props: TaskPopupProps) {
       {/* Task List */}
       <div className="w-full h-[calc(100%-80px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary-black scrollbar-track-white">
         {filteredData.map((task) => (
-          <div key={task.id}>
-            <TaskList task={task} />
-          </div>
+          <TaskList key={task.id} task={task} />
         ))}
       </div>
     </div>
