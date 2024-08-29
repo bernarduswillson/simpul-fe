@@ -52,7 +52,7 @@ const EditMessageFlyout = () => {
         Personal Errands
       </button>
       <button 
-        className={`border-b-[1px] border-primary-gray w-[230px] px-5 py-2 bg-white text-black text-start hover:bg-primary-blue hover:text-white transition-all duration-200 ${filter === "urgent" ? "text-primary-blue" : ""}`}
+        className={`border-primary-gray w-[230px] px-5 py-2 bg-white text-black text-start hover:bg-primary-blue hover:text-white transition-all duration-200 ${filter === "urgent" ? "text-primary-blue" : ""}`}
         onClick={() => dispatch(setFilter("urgent"))}
       >
         Urgent To-Do

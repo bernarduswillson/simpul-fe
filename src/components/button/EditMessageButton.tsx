@@ -45,7 +45,7 @@ const EditMessageFlyout = (props: EditMessageFlyoutProps) => {
         Edit
       </button>
       <button 
-        className="border-b-[1px] w-[120px] px-5 py-1 bg-white text-indicator-red text-start hover:bg-indicator-red hover:text-white transition-all duration-200"
+        className="w-[120px] px-5 py-1 bg-white text-indicator-red text-start hover:bg-indicator-red hover:text-white transition-all duration-200"
         onClick={() => onClick && onClick("delete")}
       >
         Delete

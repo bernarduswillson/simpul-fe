@@ -10,14 +10,18 @@ import descriptionIcon from "@/assets/icons/description-ic.svg";
 
 // Components
 import CalendarButton from "@/components/button/CalendarButton";
+import DeleteTaskButton from "@/components/button/DeleteTaskButton";
+import Modal from "@/components/dialogue/Modal";
+import Button from "@/components/button/Button";
 
 // Hooks
 import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
-import { setTasks, setLoading, setDate, setDescription } from '@/redux/reducers/taskSlice';
+import { setTasks, setLoading, setIsDone, setDate, setDescription, deleteTask } from '@/redux/reducers/taskSlice';
 
 // Interface
 import Task from "@/interfaces/task";
+import { set } from "date-fns";
 interface TaskListProps {
   task: Task;
 }
@@ -35,7 +39,28 @@ export default function TaskList(props: TaskListProps) {
   const [selectedDate, setSelectedDate] = useState(task.date);
   const [isEditing, setIsEditing] = useState(false);
   const [desc, setDesc] = useState(task.description);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleDeleteTaskButton = async(type: "edit" | "delete") => {
+    if (type === "delete") {
+      setIsDeleteModalOpen(true);
+    }
+  }
+
+  const handleDeleteTask = async () => {
+    setIsDeleteModalOpen(false);
+    try {
+      const response = await apiClient.delete(`/tasks/${task.id}`);
+      if (response.status === 200 && response.data.status === 'success') {
+        dispatch(deleteTask(task.id));
+      } else {
+        console.log("Failed to delete task");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   // Hooks
   useEffect(() => {
@@ -49,7 +74,7 @@ export default function TaskList(props: TaskListProps) {
         if (response.status === 200 && response.data.status === 'success') {
           dispatch(setDate({ id: task.id, date: selectedDate }));
         } else {
-          console.log("Failed to read messages");
+          console.log("Failed to edit date");
         }
       } catch (error) {
         console.error(error);
@@ -88,7 +113,7 @@ export default function TaskList(props: TaskListProps) {
         if (response.status === 200 && response.data.status === 'success') {
           dispatch(setDescription({ id: task.id, description: desc }));
         } else {
-          console.log("Failed to read messages");
+          console.log("Failed to edit description");
         }
       } catch (error) {
         console.error(error);
@@ -99,6 +124,29 @@ export default function TaskList(props: TaskListProps) {
       editDescription();
     }
   };
+
+  const handleCheck = async () => {
+    if (!isChecked) {
+      setIsDropdownVisible(false);
+    }
+    setIsChecked(!isChecked);
+
+    try {
+      const newStatus = {
+        isDone: !isChecked,
+      };
+
+      const response = await apiClient.put(`/tasks/${task.id}`, newStatus);
+      if (response.status === 200 && response.data.status === 'success') {
+        console.log("Task updated");
+        dispatch(setIsDone({ id: task.id, isDone: !isChecked }));
+      } else {
+        console.log("Failed to update task");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const parseDate = (date: string): string => {
     const newDate = new Date(date);
@@ -133,9 +181,9 @@ export default function TaskList(props: TaskListProps) {
             type="checkbox"
             className="w-[15px] h-[15px] mt-[5px] cursor-pointer"
             checked={isChecked}
-            onChange={() => setIsChecked(!isChecked)}
+            onChange={handleCheck}
           />
-          <div className="ml-5 flex-1 cursor-pointer" onClick={() => setIsChecked(!isChecked)}>
+          <div className="ml-5 flex-1 cursor-pointer" onClick={handleCheck}>
             <p
               className={`lato-bold text-black transition-all duration-300 ${isChecked ? "line-through text-gray-500" : ""}`}
             >
@@ -154,13 +202,9 @@ export default function TaskList(props: TaskListProps) {
             className={`ml-5 mt-[6px] cursor-pointer transition-transform duration-300 ${isDropdownVisible ? 'rotate-0' : 'rotate-180'}`}
             onClick={() => setIsDropdownVisible(!isDropdownVisible)}
           />
-          <Image
-            src={kebabMenuIcon}
-            alt="Kebab Menu Icon"
-            width={13}
-            height={13}
-            className="ml-5 mt-[10px] cursor-pointer"
-          />
+          <div className={`w-7 h-7 translate-x-[12px] transition-all duration-300 ${isDropdownVisible ? 'opacity-100' : 'opacity-0'}`}>
+            <DeleteTaskButton onClick={(type) => handleDeleteTaskButton(type)} />
+          </div>
         </div>
       </div>
 
@@ -197,6 +241,34 @@ export default function TaskList(props: TaskListProps) {
           )}
         </div>
       </div>
+
+      {/* Delete Modal */}
+      <Modal onClose={() => setIsDeleteModalOpen(false)} isOpen={isDeleteModalOpen}>
+        <h2 className="mb-1 text-black lato-bold header-3 text-center">
+          Delete
+        </h2>
+        <p className="mb-7 text-gray-500 lato-regular body-m text-center">
+          Are you sure you want to delete this task?
+        </p>
+        <div>
+          <div className='flex gap-7'>
+            <Button
+              variant="warning"
+              width='120'
+              onClick={() => handleDeleteTask()}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="secondary"
+              width='120'
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
