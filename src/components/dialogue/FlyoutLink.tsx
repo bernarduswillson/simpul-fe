@@ -11,13 +11,14 @@ interface FlyoutLinkProps {
   onClick?: (type: string) => void;
 }
 
+
 const FlyoutLink = (props: FlyoutLinkProps): JSX.Element => {
   // Props
   const { children, FlyoutContent, type, isUser, onClick } = props;
 
   // States
-  const flyoutRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const flyoutRef = useRef<HTMLDivElement>(null);
 
   // Hooks
   useEffect(() => {
@@ -32,6 +33,7 @@ const FlyoutLink = (props: FlyoutLinkProps): JSX.Element => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [flyoutRef]);
+
 
   return (
     <div className="relative w-full h-full z-10" onClick={() => setOpen(!open)}>

@@ -35,7 +35,10 @@ export default function MessageList(props: MessageListProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editedMessage, setEditedMessage] = useState(message.content);
+  const userBubbleColor = intToBubbleColor(hashCode(message.user.id));
+  const userNameColor = intToNameColor(hashCode(message.user.id));
 
+  // Handlers
   const handleEditMessageButton = async(type: string) => {
     if (type === "edit") {
       setIsEditModalOpen(true);
@@ -90,15 +93,6 @@ export default function MessageList(props: MessageListProps) {
       // setLoading(false);
     }
   }
-
-  useEffect(() => {
-    return () => {
-      // setLoading(false);
-    }
-  }, []);
-
-  const userBubbleColor = intToBubbleColor(hashCode(message.user.id));
-  const userNameColor = intToNameColor(hashCode(message.user.id));
 
 
   return (

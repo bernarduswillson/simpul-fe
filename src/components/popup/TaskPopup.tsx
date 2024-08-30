@@ -30,10 +30,10 @@ export default function TaskPopup(props: TaskPopupProps) {
   const { isActive } = props;
 
   // States
-  const animationContainerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
-  const userState = useAppSelector((state) => state.user.value);
   const { data, filteredData, loading } = useAppSelector((state) => state.task.value);
+  const userState = useAppSelector((state) => state.user.value);
+  const animationContainerRef = useRef<HTMLDivElement>(null);
 
   // Hooks
   useEffect(() => {
@@ -74,7 +74,9 @@ export default function TaskPopup(props: TaskPopupProps) {
     }
   }, [loading]);
 
-  const createTask = async (type: string) => {
+
+  // Handlers
+  const handleCreateTask = async (type: string) => {
     try {
       const newTask = {
         userId: userState.id,
@@ -102,7 +104,7 @@ export default function TaskPopup(props: TaskPopupProps) {
           <FilterTaskButton />
         </div>
         <div className="mr-5">
-          <NewTaskButton onClick={(type) => createTask(type)} />
+          <NewTaskButton onClick={(type) => handleCreateTask(type)} />
         </div>
       </div>
 

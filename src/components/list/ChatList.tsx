@@ -22,6 +22,7 @@ export default function ChatList(props: ChatListProps) {
   // States
   const userState = useAppSelector((state) => state.user.value);
 
+  // Handlers
   const handleClick = (clicked: string) => {
     if (onClick) {
       onClick(clicked);

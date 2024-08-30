@@ -34,16 +34,16 @@ export default function TaskList(props: TaskListProps) {
 
   // States
   const dispatch = useAppDispatch();
-  const [isDropdownVisible, setIsDropdownVisible] = useState(task.isDone ? false : true);
   const filter = useAppSelector((state) => state.task.value.filter);
-  const [maxHeight, setMaxHeight] = useState("0px");
-  const [isChecked, setIsChecked] = useState(task.isDone);
-  const [selectedDate, setSelectedDate] = useState(task.date);
-  const [isEditingDesc, setIsEditingDesc] = useState(false);
+  const [title, setTitle] = useState(task.name);
   const [desc, setDesc] = useState(task.description);
+  const [selectedDate, setSelectedDate] = useState(task.date);
+  const [isChecked, setIsChecked] = useState(task.isDone);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(task.isDone ? false : true);
+  const [maxHeight, setMaxHeight] = useState("0px");
+  const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddTagModalOpen, setIsAddTagModalOpen] = useState(false);
-  const [title, setTitle] = useState(task.name);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const tagMap: { [key: string]: { name: string; style: string } } = {
@@ -56,27 +56,6 @@ export default function TaskList(props: TaskListProps) {
     7: { name: "Appointments", style: "bg-stickers-700" },
   };
   
-
-  const handleDeleteTaskButton = async(type: string) => {
-    if (type === "delete") {
-      setIsDeleteModalOpen(true);
-    }
-  }
-
-  const handleDeleteTask = async () => {
-    setIsDeleteModalOpen(false);
-    try {
-      const response = await apiClient.delete(`/tasks/${task.id}`);
-      if (response.status === 200 && response.data.status === 'success') {
-        dispatch(deleteTask(task.id));
-      } else {
-        console.log("Failed to delete task");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   // Hooks
   useEffect(() => {
     const editDate = async () => {
@@ -110,11 +89,26 @@ export default function TaskList(props: TaskListProps) {
   }, [isDropdownVisible, isEditingDesc, filter, task]);
 
 
-  const updateMaxHeight = (): void => {
-    if (dropdownRef.current) {
-      setMaxHeight(isDropdownVisible ? `${dropdownRef.current.scrollHeight}px` : "0px");
+  // Handlers
+  const handleDeleteTaskButton = async(type: string) => {
+    if (type === "delete") {
+      setIsDeleteModalOpen(true);
     }
-  };
+  }
+
+  const handleDeleteTask = async () => {
+    setIsDeleteModalOpen(false);
+    try {
+      const response = await apiClient.delete(`/tasks/${task.id}`);
+      if (response.status === 200 && response.data.status === 'success') {
+        dispatch(deleteTask(task.id));
+      } else {
+        console.log("Failed to delete task");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const handleDescriptionSubmit = () => {
     setIsEditingDesc(false);
@@ -203,6 +197,13 @@ export default function TaskList(props: TaskListProps) {
     } catch (error) {
       console.error(error);
     } finally {
+    }
+  };
+
+
+  const updateMaxHeight = (): void => {
+    if (dropdownRef.current) {
+      setMaxHeight(isDropdownVisible ? `${dropdownRef.current.scrollHeight}px` : "0px");
     }
   };
 

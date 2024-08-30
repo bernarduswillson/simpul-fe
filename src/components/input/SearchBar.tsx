@@ -1,6 +1,3 @@
-// Libs
-import Image from "next/image";
-
 // Assets
 import SearchIcon from "@/assets/icons/search-ic";
 

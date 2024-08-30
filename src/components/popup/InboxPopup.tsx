@@ -27,12 +27,12 @@ export default function InboxPopup(props: InboxPopupProps) {
   const { isActive } = props;
 
   // States
-  const animationContainerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const userState = useAppSelector((state) => state.user.value);
   const { data, filteredData, loading } = useAppSelector((state) => state.chat.value);
   const [searchTerm, setSearchTerm] = useState("");
   const [clickedChat, setClickedChat] = useState<string | null>(null);
+  const animationContainerRef = useRef<HTMLDivElement>(null);
 
   // Hooks
   useEffect(() => {
@@ -74,6 +74,7 @@ export default function InboxPopup(props: InboxPopupProps) {
   }, [loading]);
 
   
+  // Handlers
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);

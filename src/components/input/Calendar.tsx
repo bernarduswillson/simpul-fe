@@ -20,7 +20,7 @@ interface CalendarProps {
 
 
 export default function Calendar(props: CalendarProps) {
-  // Pops
+  // Props
   const { date, isOpen, onClose, onDateSelect, startWeekOnSunday = true, primaryColor = 'text-black', todayColor = 'bg-gray-200' } = props;
 
   // States
@@ -38,6 +38,7 @@ export default function Calendar(props: CalendarProps) {
   }, [selectedDate]);
 
 
+  // Render
   const renderHeader = () => {
     const dateFormat = 'MMMM yyyy';
     return (
@@ -113,6 +114,7 @@ export default function Calendar(props: CalendarProps) {
     return <div>{rows}</div>;
   };
 
+  // Handlers
   const onDateClick = (day: Date) => {
     setSelectedDate(day);
     onDateSelect && onDateSelect(day);

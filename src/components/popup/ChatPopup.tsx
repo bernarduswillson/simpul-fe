@@ -34,9 +34,6 @@ export default function ChatPopup(props: ChatPopupProps) {
   const { chat, onClose } = props;
 
   // States
-  const animationContainerRef = useRef<HTMLDivElement>(null);
-  const animationChatContainerRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const userState = useAppSelector((state) => state.user.value);
   const [data, setData] = useState<Message[]>([]);
@@ -45,6 +42,9 @@ export default function ChatPopup(props: ChatPopupProps) {
   const [message, setMessage] = useState("");
   const [unreadIndex, setUnreadIndex] = useState(-1);
   const [onReply, setOnReply] = useState<{ id: String, name: string, message: string } | null>(null);
+  const animationContainerRef = useRef<HTMLDivElement>(null);
+  const animationChatContainerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Hooks
   useEffect(() => {
@@ -71,27 +71,6 @@ export default function ChatPopup(props: ChatPopupProps) {
 
     fetchMessages();
   }, [chat, userState.id, dispatch]);
-
-  const readMessages = async () => {
-    if (!chat || !userState.id) return;
-
-    try {
-      const response = await apiClient.put(`/messages/${chat.id}/read/${userState.id}`);
-      if (response.status === 200 && response.data.status === 'success') {
-        dispatch(setLastMessage(response.data.data.lastMessage));
-      } else {
-        console.log("Failed to read messages");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleClose = () => {
-    readMessages();
-    onClose();
-    setOnReply(null);
-  }
 
   useEffect(() => {
     const container = animationContainerRef.current;
@@ -129,7 +108,30 @@ export default function ChatPopup(props: ChatPopupProps) {
     }
   }, [data]);
 
-  const sendMessage = async () => {
+
+  // Handlers 
+  const handleClose = () => {
+    handleReadMessages();
+    onClose();
+    setOnReply(null);
+  }
+
+  const handleReadMessages = async () => {
+    if (!chat || !userState.id) return;
+
+    try {
+      const response = await apiClient.put(`/messages/${chat.id}/read/${userState.id}`);
+      if (response.status === 200 && response.data.status === 'success') {
+        dispatch(setLastMessage(response.data.data.lastMessage));
+      } else {
+        console.log("Failed to read messages");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSendMessage = async () => {
     if (message === "" || !chat || !userState.id) return;
   
     setSendLoading(true);
@@ -160,6 +162,7 @@ export default function ChatPopup(props: ChatPopupProps) {
     }
   };
 
+
   const findFirstUnread = (messages: Message[]): number => {
     for (let i = 0; i < messages.length; i++) {
       const isRead = messages[i].readBy.some(reader => reader.id === userState.id);
@@ -170,6 +173,7 @@ export default function ChatPopup(props: ChatPopupProps) {
   
     return -1;
   };
+
 
   return (
     <div className="relative bg-white h-full w-full rounded-lg flex flex-col justify-between">
@@ -284,18 +288,18 @@ export default function ChatPopup(props: ChatPopupProps) {
               className="w-full bg-white px-3 py-[9px] border-2 border-primary-gray rounded-lg lato-regular focus:outline-none" 
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
             />
           </div>
         </div>
         <div className="mr-5">
           <div className="hidden sm:block">
-            <Button width="100" onClick={() => sendMessage()}>
+            <Button width="100" onClick={() => handleSendMessage()}>
               Send
             </Button>
           </div>
           <div className="block sm:hidden">
-            <Button width="70" onClick={() => sendMessage()}>
+            <Button width="70" onClick={() => handleSendMessage()}>
               &gt;
             </Button>
           </div>

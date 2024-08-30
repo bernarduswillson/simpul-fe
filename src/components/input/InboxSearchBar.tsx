@@ -12,6 +12,7 @@ export default function InboxSearchBar(props: InboxSearchBarProps) {
   // Props
   const { value, onChange } = props;
 
+  
   return (
     <div className="relative bg-white border-2 border-primary-gray rounded-md h-9 w-full flex items-center focus-within:border-primary-blue focus-within:scale-[1.01] transition-all duration-500">
       {/* Search Input */}

@@ -18,10 +18,12 @@ export default function ChatProfileImage({ participants }: ChatProfileImageProps
   // States
   const userState = useAppSelector((state) => state.user.value);
 
+  // Handlers
   const getParticipantPhoto = (index: number) => 
     participants.filter((participant) => participant.id !== userState.id)[index]?.photo || 
     "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
 
+    
   return (
     <div className="w-[54px] h-[38px] relative flex justify-center">
       {participants.length >= 2 && (
