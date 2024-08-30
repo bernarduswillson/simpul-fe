@@ -6,8 +6,11 @@ interface ButtonProps {
   children: React.ReactNode
 }
 
+
 const Button = (props: ButtonProps): JSX.Element => {
+  // Props
   const { variant = 'primary', children, width = 'auto', onClick } = props;
+
 
   return (
     <button 

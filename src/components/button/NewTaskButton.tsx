@@ -1,9 +1,3 @@
-// Libs
-import Image from "next/image";
-
-// Assets
-import chevronDownIcon from "@/assets/icons/chevron-down-ic.svg";
-
 // Components
 import FlyoutLink from "@/components/dialogue/FlyoutLink";
 import Button from "@/components/button/Button";
@@ -12,6 +6,7 @@ import Button from "@/components/button/Button";
 interface NewTaskButtonProps {
   onClick?: (type: string) => void;
 }
+
 
 export default function NewTaskButton(props: NewTaskButtonProps) {
   // Props
@@ -26,10 +21,12 @@ export default function NewTaskButton(props: NewTaskButtonProps) {
   );
 };
 
+
 // Interface
 interface NewTaskFlyoutProps {
   onClick?: (type: string) => void;
 }
+
 
 const NewTaskFlyout = (props: NewTaskFlyoutProps) => {
   // Props

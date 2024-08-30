@@ -2,7 +2,6 @@
 // Libs
 import { useEffect, useState, useRef } from "react";
 import lottie from 'lottie-web';
-import Image from 'next/image';
 
 // Assets
 import chatLoadingAnimation from "@/assets/animations/chat-loading.json";
@@ -22,7 +21,6 @@ import { setLastMessage } from "@/redux/reducers/chatSlice";
 // Interface
 import Message from "@/interfaces/message";
 import Chat from "@/interfaces/chat";
-import { set } from "date-fns";
 interface ChatPopupProps {
   chat: Chat | null;
   onClose: () => void;
@@ -60,7 +58,6 @@ export default function ChatPopup(props: ChatPopupProps) {
   const [data, setData] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [sendLoading, setSendLoading] = useState(false);
-  const [isChanged, setIsChangedState] = useState<boolean | null>(null);
   const [message, setMessage] = useState("");
   const [unreadIndex, setUnreadIndex] = useState(-1);
   const [onReply, setOnReply] = useState<{ id: String, name: string, message: string } | null>(null);
@@ -231,9 +228,6 @@ export default function ChatPopup(props: ChatPopupProps) {
           }
         </div>
         <div className="w-[25px] flex justify-center items-center">
-          {/* <button className="p-3 hover:scale-110 transition-all duration-300" onClick={handleClose}>
-            <ExitIcon width={20} height={20} fillColor="#000"/>
-          </button> */}
         </div>
       </div>
       
@@ -276,7 +270,7 @@ export default function ChatPopup(props: ChatPopupProps) {
                         </div>
                       )}
                     {/* Message List */}
-                    <MessageList message={message} onChange={(type) => setIsChangedState(type)} onReply={(id, name, message) => setOnReply({ id, name, message })} />
+                    <MessageList message={message} onReply={(id, name, message) => setOnReply({ id, name, message })} />
                   </div>
                 </div>
               );

@@ -1,6 +1,3 @@
-// Libs
-import Image from "next/image";
-
 // Assets
 import TaskIcon from "@/assets/icons/task-ic";
 import InboxIcon from "@/assets/icons/inbox-ic";
@@ -26,6 +23,7 @@ export default function ActionButton(props: ActionButtonProps) {
     }
   }
 
+  
   return (
     <div className="relative">
       <button

@@ -14,10 +14,12 @@ interface EditMessageButtonProps {
   onClick?: (type: string) => void;
 }
 
+
 export default function EditMessageButton(props: EditMessageButtonProps) {
   // Props
   const { type = "left", isUser, onClick } = props;
 
+  
   return (
     <FlyoutLink FlyoutContent={EditMessageFlyout} type={type} isUser={isUser} onClick={onClick}>
       <button className="py-2 px-2">
@@ -27,6 +29,7 @@ export default function EditMessageButton(props: EditMessageButtonProps) {
   );
 };
 
+
 // Interface
 interface EditMessageFlyoutProps {
   type?: string
@@ -34,9 +37,11 @@ interface EditMessageFlyoutProps {
   onClick?: (type: string) => void;
 }
 
+
 const EditMessageFlyout = (props: EditMessageFlyoutProps) => {
   // Props
   const { type, isUser, onClick } = props;
+
 
   return (
     <div className={`bg-white border-[1px] rounded-lg shadow-md absolute w-[120px] ${type === "right" ? 'left-[15px]' : 'left-[-135px]'} top-[-80px] lato-bold overflow-hidden`}>

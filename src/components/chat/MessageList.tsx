@@ -18,13 +18,13 @@ import Message from "@/interfaces/message";
 
 interface MessageListProps {
   message: Message;
-  onChange?: (isChanged: boolean) => void;
   onReply?: (id: string, name: string, message: string) => void;
 }
 
+
 export default function MessageList(props: MessageListProps) {
   // Props
-  const { message, onChange, onReply } = props;
+  const { message, onReply } = props;
 
   // States
   const dispatch = useAppDispatch();
@@ -46,6 +46,11 @@ export default function MessageList(props: MessageListProps) {
   }
 
   const handleEditMessage = async () => {
+    if (editedMessage === message.content) {
+      setIsEditModalOpen(false);
+      return;
+    }
+    
     // setLoading(true);
     setIsEditModalOpen(false);
     try {
@@ -57,7 +62,6 @@ export default function MessageList(props: MessageListProps) {
       if (response.status === 200 && response.data.status === 'success') {
         dispatch(setLastMessage(response.data.data.lastMessage));
         console.log("Message edited");
-        onChange && onChange(true);
       } else {
         console.log("Failed to edit message");
       }
@@ -76,7 +80,6 @@ export default function MessageList(props: MessageListProps) {
       if (response.status === 200 && response.data.status === 'success') {
         dispatch(setLastMessage(response.data.data.lastMessage));
         console.log("Message deleted");
-        onChange && onChange(true);
       } else {
         console.log("Failed to delete message");
       }
@@ -131,6 +134,7 @@ export default function MessageList(props: MessageListProps) {
 
   const userBubbleColor = intToBubbleColor(hashCode(message.user.id));
   const userNameColor = intToNameColor(hashCode(message.user.id));
+
 
   return (
     <div

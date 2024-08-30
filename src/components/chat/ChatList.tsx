@@ -2,7 +2,7 @@
 import ChatProfileImage from "@/components/profile/ChatProfileImage";
 
 // Hooks
-import { useAppSelector, useAppDispatch } from "@/redux/store";
+import { useAppSelector } from "@/redux/store";
 
 // Interface
 import Chat from "@/interfaces/chat";
@@ -17,7 +17,6 @@ export default function ChatList(props: ChatListProps) {
   const { chat, onClick } = props;
 
   // States
-  const dispatch = useAppDispatch(); 
   const userState = useAppSelector((state) => state.user.value);
 
   const parseDate = (date: string): string => {

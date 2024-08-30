@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // Libs
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 import lottie from 'lottie-web';
 
@@ -8,14 +7,13 @@ import lottie from 'lottie-web';
 import taskLoadingAnimation from "@/assets/animations/task-loading.json";
 
 // Components
-import Button from "@/components/button/Button";
 import FilterTaskButton from "@/components/button/FilterTaskButton";
 import TaskList from "@/components/task/TaskList";
 import NewTaskButton from "@/components/button/NewTaskButton";
 
 // Hooks
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { setTasks, setLoading, setFilter } from "@/redux/reducers/taskSlice";
+import { setTasks, setLoading } from "@/redux/reducers/taskSlice";
 
 // Api
 import apiClient from "@/api/apiClient";

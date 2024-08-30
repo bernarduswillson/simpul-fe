@@ -25,6 +25,7 @@ export default function CornerButton(props: CornerButtonProps) {
     }
   };
 
+  
   return (
     <div className="relative group">
       <div className="relative flex items-center hover:scale-110 transition-transform ease-in-out">

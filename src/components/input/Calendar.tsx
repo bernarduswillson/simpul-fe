@@ -1,10 +1,13 @@
+// Libs
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
 
+// Assets
 import chevronDownIcon from '@/assets/icons/chevron-down-ic.svg';
 
+// Interface
 interface CalendarProps {
   date: string;
   isOpen: boolean;
@@ -15,14 +18,17 @@ interface CalendarProps {
   todayColor?: string;
 }
 
+
 export default function Calendar(props: CalendarProps) {
+  // Pops
   const { date, isOpen, onClose, onDateSelect, startWeekOnSunday = true, primaryColor = 'text-black', todayColor = 'bg-gray-200' } = props;
 
+  // States
   const [selectedDate, setSelectedDate] = useState<Date | null>(date === "" ? new Date() : new Date(date));
-
   const initialDate = selectedDate || new Date();
   const [currentDate, setCurrentDate] = useState(initialDate);
 
+  // Hooks
   useEffect(() => {
     if (selectedDate) {
       setCurrentDate(selectedDate);
@@ -30,6 +36,7 @@ export default function Calendar(props: CalendarProps) {
       setCurrentDate(new Date());
     }
   }, [selectedDate]);
+
 
   const renderHeader = () => {
     const dateFormat = 'MMMM yyyy';
@@ -46,6 +53,7 @@ export default function Calendar(props: CalendarProps) {
     );
   };
 
+
   const renderDays = () => {
     const days = [];
     const dateFormat = 'EEEEE';
@@ -61,6 +69,7 @@ export default function Calendar(props: CalendarProps) {
 
     return <div className="grid grid-cols-7 mb-2 lato-bold">{days}</div>;
   };
+
 
   const renderCells = () => {
     const monthStart = startOfMonth(currentDate);
@@ -118,6 +127,7 @@ export default function Calendar(props: CalendarProps) {
     setCurrentDate(addDays(currentDate, -30));
   };
 
+  
   return (
     <AnimatePresence>
       {isOpen && (

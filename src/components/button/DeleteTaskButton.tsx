@@ -12,10 +12,12 @@ interface DeleteTaskButtonProps {
   onClick?: (type: string) => void;
 }
 
+
 export default function DeleteTaskButton(props: DeleteTaskButtonProps) {
   // Props
   const { onClick } = props;
 
+  
   return (
     <FlyoutLink FlyoutContent={DeleteTaskFlyout} onClick={onClick}>
       <button className="py-2 px-2">
@@ -25,14 +27,17 @@ export default function DeleteTaskButton(props: DeleteTaskButtonProps) {
   );
 };
 
+
 // Interface
 interface DeleteTaskFlyoutProps {
   onClick?: (type: string) => void;
 }
 
+
 const DeleteTaskFlyout = (props: DeleteTaskFlyoutProps) => {
   // Props
   const { onClick } = props;
+
 
   return (
     <div className={`bg-white border-[1px] rounded-lg shadow-md absolute w-[120px] left-[-115px] top-[-60px] lato-bold overflow-hidden`}>

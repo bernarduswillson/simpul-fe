@@ -9,14 +9,12 @@ interface ModalProps {
   children: React.ReactNode,
 }
 
-const Modal = (props: ModalProps): JSX.Element => {
-  const {
-    onClose,
-    isOpen,
-    width,
-    children
-  } = props
 
+const Modal = (props: ModalProps): JSX.Element => {
+  // Props
+  const { onClose, isOpen, width, children} = props
+
+  
   return (
     <AnimatePresence>
       {isOpen && (

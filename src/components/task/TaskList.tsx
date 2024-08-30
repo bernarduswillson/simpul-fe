@@ -4,7 +4,6 @@ import Image from "next/image";
 
 // Assets
 import chevronDownIcon from "@/assets/icons/chevron-down-ic.svg";
-import kebabMenuIcon from "@/assets/icons/kebab-menu-ic.svg";
 import scheduleIcon from "@/assets/icons/schedule-ic.svg";
 import descriptionIcon from "@/assets/icons/description-ic.svg";
 import tagIcon from "@/assets/icons/tag-ic.svg";
@@ -18,7 +17,7 @@ import Button from "@/components/button/Button";
 // Hooks
 import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
-import { setTasks, setLoading, setName, setIsDone, setDate, setDescription, setTags, deleteTask } from '@/redux/reducers/taskSlice';
+import { setName, setIsDone, setDate, setDescription, setTags, deleteTask } from '@/redux/reducers/taskSlice';
 
 // Interface
 import Task from "@/interfaces/task";
