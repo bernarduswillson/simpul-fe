@@ -175,6 +175,7 @@ export default function ChatPopup(props: ChatPopupProps) {
       setMessage("");
       setSendLoading(false);
       setOnReply(null);
+      setUnreadIndex(-1);
     }
   };
   
@@ -271,9 +272,9 @@ export default function ChatPopup(props: ChatPopupProps) {
                           </div>
                           <span className="relative z-10 bg-white px-5">
                             Unread Messages
-                            </span>
-                            </div>
-                            )}
+                          </span>
+                        </div>
+                      )}
                     {/* Message List */}
                     <MessageList message={message} onChange={(type) => setIsChangedState(type)} onReply={(id, name, message) => setOnReply({ id, name, message })} />
                   </div>
@@ -290,13 +291,13 @@ export default function ChatPopup(props: ChatPopupProps) {
 
         {/* Loading */}
         {sendLoading && 
-          <div className="absolute flex items-center border-[1px] border-primary-gray bg-stickers-100 top-[-60px] w-[92%] h-16 rounded-lg lato-regular">
+          <div className="z-[100] absolute flex items-center border-[1px] border-primary-gray bg-stickers-100 top-[-50px] w-[92%] h-16 rounded-lg lato-regular">
             <div className="mx-5 mr-8 w-[40px] h-[40px] z-50" ref={animationChatContainerRef}></div>
             <p>
               Please wait while we send your message...
             </p>
           </div>
-        }
+        } 
 
         <div className="relative w-full min-h-full mx-5 justify-end flex flex-col">
           <div className={`flex flex-col`}>
