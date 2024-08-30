@@ -18,6 +18,9 @@ import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { setLastMessage } from "@/redux/reducers/chatSlice";
 
+// Utils
+import { isSameDay, formatDate2 } from "@/utils/date";
+
 // Interface
 import Message from "@/interfaces/message";
 import Chat from "@/interfaces/chat";
@@ -175,25 +178,6 @@ export default function ChatPopup(props: ChatPopupProps) {
       setUnreadIndex(-1);
     }
   };
-  
-
-  const isSameDay = (date1: Date, date2: Date): boolean => {
-    return date1.toDateString() === date2.toDateString();
-  };
-
-  const parseDate = (date: string): string => {
-    const newDate = new Date(date);
-
-    const day = newDate.getDate();
-    const month = newDate.toLocaleString('default', { month: 'long' });
-    const year = newDate.getFullYear();
-
-    if (isSameDay(new Date(), newDate)) {
-      return `Today, ${month} ${day}, ${year}`;
-    }
-
-    return `${month} ${day}, ${year}`;
-  }
 
   const findFirstUnread = (messages: Message[]): number => {
     for (let i = 0; i < messages.length; i++) {
@@ -255,7 +239,7 @@ export default function ChatPopup(props: ChatPopupProps) {
                           <div className="w-full border-t border-primary-black mx-8"></div>
                         </div>
                         <span className="relative z-10 bg-white px-5">
-                          {parseDate(message.createdAt)}
+                          {formatDate2(message.createdAt)}
                         </span>
                       </div>
                     )}

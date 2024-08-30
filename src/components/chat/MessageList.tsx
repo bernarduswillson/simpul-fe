@@ -13,6 +13,9 @@ import { setLastMessage } from "@/redux/reducers/chatSlice";
 // Api
 import apiClient from "@/api/apiClient";
 
+// Utils
+import { dateToTime } from "@/utils/date";
+
 // Interface
 import Message from "@/interfaces/message";
 
@@ -96,15 +99,6 @@ export default function MessageList(props: MessageListProps) {
     }
   }, []);
 
-  // Parse date
-  const parseTime = (date: string): string => {
-    const newDate = new Date(date);
-  
-    const hours = String(newDate.getHours()).padStart(2, '0');
-    const minutes = String(newDate.getMinutes()).padStart(2, '0');
-  
-    return `${hours}:${minutes}`;
-  }
 
   // Generate colors
   const hashCode = (str: string) => {
@@ -177,7 +171,7 @@ export default function MessageList(props: MessageListProps) {
 
           <p className="leading-5">{message.content}</p>
           <div className="flex">
-            <p className="text-sm mt-2">{parseTime(message.createdAt)} </p>
+            <p className="text-sm mt-2">{dateToTime(message.createdAt)}</p>
             <p className={`${message.isUpdated ? 'block' : 'hidden'} text-sm mt-2 ml-1`}>(Edited)</p>
           </div>
         </div>

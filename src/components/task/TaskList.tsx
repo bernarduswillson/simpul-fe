@@ -19,6 +19,9 @@ import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { setName, setIsDone, setDate, setDescription, setTags, deleteTask } from '@/redux/reducers/taskSlice';
 
+// Utils
+import { formatDate1, calculateDays } from "@/utils/date";
+
 // Interface
 import Task from "@/interfaces/task";
 interface TaskListProps {
@@ -202,32 +205,7 @@ export default function TaskList(props: TaskListProps) {
     } finally {
     }
   };
-  
 
-
-  const parseDate = (date: string): string => {
-    const newDate = new Date(date);
-
-    const day = String(newDate.getDate()).padStart(2, "0");
-    const month = String(newDate.getMonth() + 1).padStart(2, "0");
-    const year = newDate.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
-
-  const calculateDate = (date: string): string => {
-    const newDate = new Date(date);
-    const currentDate = new Date();
-
-    const diffTime = newDate.getTime() - currentDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Tomorrow";
-
-    if (diffDays < 0) return "Overdue";
-    return `${diffDays} Days Left`;
-  };
 
   return (
     <div className="relative flex flex-col border-b-[2px] border-gray-300 px-5 py-3 overflow-hidden">
@@ -261,8 +239,8 @@ export default function TaskList(props: TaskListProps) {
           </div>
         </div>
         <div className="flex items-start justify-end w-[80px] md:w-[450px]">
-          <p className={`lato-bold text-indicator-red text-md hidden md:block transition-all duration-300 mt-[2px] ${isChecked || selectedDate === "" ? 'opacity-0' : 'opacity-100'}`}>{calculateDate(task.date)}</p>
-          <p className={`lato-regular text-black ml-5 text-md hidden md:block mt-[2px] ${selectedDate === "" ? 'opacity-0' : 'opacity-100'}`}>{parseDate(task.date)}</p>
+          <p className={`lato-bold text-indicator-red text-md hidden md:block transition-all duration-300 mt-[2px] ${isChecked || selectedDate === "" ? 'opacity-0' : 'opacity-100'}`}>{calculateDays(task.date)}</p>
+          <p className={`lato-regular text-black ml-5 text-md hidden md:block mt-[2px] ${selectedDate === "" ? 'opacity-0' : 'opacity-100'}`}>{formatDate1(task.date)}</p>
           <Image
             src={chevronDownIcon}
             alt="Chevron Down Icon"

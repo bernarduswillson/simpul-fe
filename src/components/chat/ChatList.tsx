@@ -4,6 +4,9 @@ import ChatProfileImage from "@/components/profile/ChatProfileImage";
 // Hooks
 import { useAppSelector } from "@/redux/store";
 
+// Utils
+import { dateToTime, formatDate1 } from "@/utils/date";
+
 // Interface
 import Chat from "@/interfaces/chat";
 interface ChatListProps {
@@ -18,25 +21,6 @@ export default function ChatList(props: ChatListProps) {
 
   // States
   const userState = useAppSelector((state) => state.user.value);
-
-  const parseDate = (date: string): string => {
-    const newDate = new Date(date);
-  
-    const day = String(newDate.getDate()).padStart(2, '0');
-    const month = String(newDate.getMonth() + 1).padStart(2, '0');
-    const year = newDate.getFullYear();
-  
-    return `${day}/${month}/${year}`;
-  }
-
-  const parseTime = (date: string): string => {
-    const newDate = new Date(date);
-  
-    const hours = String(newDate.getHours()).padStart(2, '0');
-    const minutes = String(newDate.getMinutes()).padStart(2, '0');
-  
-    return `${hours}:${minutes}`;
-  }
 
   const handleClick = (clicked: string) => {
     if (onClick) {
@@ -75,10 +59,10 @@ export default function ChatList(props: ChatListProps) {
         { chat.lastMessage && (
           <div>
             <div className="hidden md:block">
-              <p className="text-primary-black text-sm">{parseDate(chat.lastMessage.createdAt)} {parseTime(chat.lastMessage.createdAt)}</p>
+              <p className="text-primary-black text-sm">{formatDate1(chat.lastMessage.createdAt)} {dateToTime(chat.lastMessage.createdAt)}</p>
             </div>
             <div className="block md:hidden">
-              <p className="text-primary-black text-sm">{parseDate(chat.lastMessage.createdAt)} <br/> {parseTime(chat.lastMessage.createdAt)}</p>
+              <p className="text-primary-black text-sm">{formatDate1(chat.lastMessage.createdAt)} <br/> {dateToTime(chat.lastMessage.createdAt)}</p>
             </div>
           </div>
         )}
