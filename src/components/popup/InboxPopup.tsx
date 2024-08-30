@@ -3,9 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import lottie from 'lottie-web';
 
-// Assets
-import chatLoadingAnimation from "@/assets/animations/chat-loading.json";
-
 // Components
 import InboxSearchBar from "@/components/input/InboxSearchBar";
 import ChatList from "@/components/chat/ChatList";
@@ -16,6 +13,9 @@ import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { setChats, setLoading, searchChats } from '@/redux/reducers/chatSlice';
 
+// Utils
+import { chatLoadingAnimationOptions } from "@/utils/lottie";
+
 // Interface
 interface InboxPopupProps {
   isActive?: boolean;
@@ -25,16 +25,6 @@ interface InboxPopupProps {
 export default function InboxPopup(props: InboxPopupProps) {
   // Props
   const { isActive } = props;
-
-  // Lottie Configuration
-  const chatLoadingAnimationOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: chatLoadingAnimation,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
-    }
-  }
 
   // States
   const animationContainerRef = useRef<HTMLDivElement>(null);

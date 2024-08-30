@@ -7,11 +7,9 @@ import Button from "@/components/button/Button";
 import Modal from "@/components/dialogue/Modal";
 
 // Hooks
+import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { setLastMessage } from "@/redux/reducers/chatSlice";
-
-// Api
-import apiClient from "@/api/apiClient";
 
 // Utils
 import { dateToTime } from "@/utils/date";

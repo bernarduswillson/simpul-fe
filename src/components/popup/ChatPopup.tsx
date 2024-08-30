@@ -4,10 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import lottie from 'lottie-web';
 
 // Assets
-import chatLoadingAnimation from "@/assets/animations/chat-loading.json";
 import ExitIcon from "@/assets/icons/exit-ic";
 import LeftArrowIcon from "@/assets/icons/left-arrow-ic";
-import loadingAnimation from "@/assets/animations/spinner-loading.json";
 
 // Components
 import Button from "@/components/button/Button";
@@ -20,6 +18,7 @@ import { setLastMessage } from "@/redux/reducers/chatSlice";
 
 // Utils
 import { isSameDay, formatDate2 } from "@/utils/date";
+import { chatLoadingAnimationOptions, sendLoadingAnimationOptions } from "@/utils/lottie";
 
 // Interface
 import Message from "@/interfaces/message";
@@ -32,25 +31,6 @@ interface ChatPopupProps {
 export default function ChatPopup(props: ChatPopupProps) {
   // Props
   const { chat, onClose } = props;
-
-  // Lottie Configuration
-  const chatLoadingAnimationOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: chatLoadingAnimation,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
-    }
-  }
-
-  const loadingAnimationOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: loadingAnimation,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
-    }
-  }
 
   // States
   const animationContainerRef = useRef<HTMLDivElement>(null);
@@ -136,7 +116,7 @@ export default function ChatPopup(props: ChatPopupProps) {
 
       if (sendLoading && container) {
         lottie.loadAnimation({
-          ...loadingAnimationOptions,
+          ...sendLoadingAnimationOptions,
           container,
         });
       }

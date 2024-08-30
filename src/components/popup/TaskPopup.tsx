@@ -12,11 +12,12 @@ import TaskList from "@/components/task/TaskList";
 import NewTaskButton from "@/components/button/NewTaskButton";
 
 // Hooks
+import apiClient from "@/api/apiClient";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setTasks, setLoading } from "@/redux/reducers/taskSlice";
 
-// Api
-import apiClient from "@/api/apiClient";
+// Utils
+import { taskLoadingAnimationOptions } from "@/utils/lottie";
 
 // Interface
 interface TaskPopupProps {
@@ -27,16 +28,6 @@ interface TaskPopupProps {
 export default function TaskPopup(props: TaskPopupProps) {
   // Props
   const { isActive } = props;
-
-  // Lottie Configuration
-  const chatLoadingAnimationOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: taskLoadingAnimation,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
-    }
-  }
 
   // States
   const animationContainerRef = useRef<HTMLDivElement>(null);
@@ -77,7 +68,7 @@ export default function TaskPopup(props: TaskPopupProps) {
 
     if (loading && container) {
       lottie.loadAnimation({
-        ...chatLoadingAnimationOptions,
+        ...taskLoadingAnimationOptions,
         container,
       });
     }
