@@ -48,16 +48,16 @@ export default function Home() {
     <div className="relative flex bg-background h-screen w-screen overflow-hidden">
       {/* Sidebar */}
       <div className={`h-screen relative border-r-[1px] border-white flex justify-end items-center transition-all duration-300 ${isSidebarOpen ? 'w-[256px]' : 'w-[60px]'}`}>
-        <div className="absolute right-[60px] overflow-hidden">
-          <Button 
-            variant="secondary"
+        <div className="absolute right-[80px] overflow-hidden">
+          <button 
+            className={`lato-bold h-[40px] w-[100px] relative flex justify-center items-center rounded-md bg-primary-black cursor-pointer transition-all duration-300 text-white hover:opacity-50 ${active !== 'none' ? 'z-[1]' : 'z-[50]'}`} 
             onClick={resetData}
           >
             Reset Data
-          </Button>
+          </button>
         </div>
         <button 
-          className={`h-12 w-12 relative flex justify-center items-center rounded-full bg-primary-black translate-x-6 cursor-pointer transition-all duration-300 ${isSidebarOpen ? "rotate-180" : "rotate-0"} ${active !== 'none' ? 'z-[1]' : 'z-30'}`}
+          className={`h-12 w-12 relative flex justify-center items-center rounded-full bg-primary-black translate-x-6 cursor-pointer transition-all duration-300 ${isSidebarOpen ? "rotate-180" : "rotate-0"} ${active !== 'none' ? 'z-[1]' : 'z-[50]'}`}
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           <Image src={rightArrowIcon} alt="right arrow icon" className="p-3"/>
