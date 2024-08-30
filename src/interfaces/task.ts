@@ -4,6 +4,7 @@ export default interface Task {
   name: string;
   date: string;
   description: string;
+  tags: Array<string>;
   type: string;
   isDone: boolean;
 }

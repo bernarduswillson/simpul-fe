@@ -100,6 +100,7 @@ export const taskSlice = createSlice({
       state.value.filteredData = applyFilter(state.value.data, filterType);
     },
 
+    // Set Name
     setName: (state, action: PayloadAction<{ id: string, name: string }>) => {
       const { id, name } = action.payload;
       const taskIndex = state.value.data.findIndex((task) => task.id === id);
@@ -147,6 +148,18 @@ export const taskSlice = createSlice({
       state.value.filteredData = applyFilter(state.value.data, state.value.filter);
     },
 
+    // Set Tags
+    setTags: (state, action: PayloadAction<{ id: string, tags: string[] }>) => {
+      const { id, tags } = action.payload;
+      const taskIndex = state.value.data.findIndex((task) => task.id === id);
+      if (taskIndex !== -1) {
+        state.value.data[taskIndex].tags = tags;
+      }
+
+      state.value.filteredData = applyFilter(state.value.data, state.value.filter);
+    },
+    
+
     // Delete Task
     deleteTask: (state, action: PayloadAction<string>) => {
       const taskId = action.payload;
@@ -157,5 +170,5 @@ export const taskSlice = createSlice({
   },
 });
 
-export const { setTasks, setLoading, setFilter, setName, setIsDone, setDate, setDescription, deleteTask } = taskSlice.actions;
+export const { setTasks, setLoading, setFilter, setName, setIsDone, setDate, setDescription, setTags, deleteTask } = taskSlice.actions;
 export default taskSlice.reducer;

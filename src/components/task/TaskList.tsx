@@ -7,6 +7,7 @@ import chevronDownIcon from "@/assets/icons/chevron-down-ic.svg";
 import kebabMenuIcon from "@/assets/icons/kebab-menu-ic.svg";
 import scheduleIcon from "@/assets/icons/schedule-ic.svg";
 import descriptionIcon from "@/assets/icons/description-ic.svg";
+import tagIcon from "@/assets/icons/tag-ic.svg";
 
 // Components
 import CalendarButton from "@/components/button/CalendarButton";
@@ -17,11 +18,10 @@ import Button from "@/components/button/Button";
 // Hooks
 import apiClient from "@/api/apiClient";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
-import { setTasks, setLoading, setName, setIsDone, setDate, setDescription, deleteTask } from '@/redux/reducers/taskSlice';
+import { setTasks, setLoading, setName, setIsDone, setDate, setDescription, setTags, deleteTask } from '@/redux/reducers/taskSlice';
 
 // Interface
 import Task from "@/interfaces/task";
-import { set } from "date-fns";
 interface TaskListProps {
   task: Task;
 }
@@ -40,8 +40,20 @@ export default function TaskList(props: TaskListProps) {
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [desc, setDesc] = useState(task.description);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAddTagModalOpen, setIsAddTagModalOpen] = useState(false);
   const [title, setTitle] = useState(task.name);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const tagMap: { [key: string]: { name: string; style: string } } = {
+    1: { name: "Important ASAP", style: "bg-stickers-100" },
+    2: { name: "Offline Meeting", style: "bg-stickers-200" },
+    3: { name: "Virtual Meeting", style: "bg-stickers-300" },
+    4: { name: "ASAP", style: "bg-stickers-400" },
+    5: { name: "Client Related", style: "bg-stickers-500" },
+    6: { name: "Self Task", style: "bg-stickers-600" },
+    7: { name: "Appointments", style: "bg-stickers-700" },
+  };
+  
 
   const handleDeleteTaskButton = async(type: string) => {
     if (type === "delete") {
@@ -93,7 +105,7 @@ export default function TaskList(props: TaskListProps) {
     return () => {
       window.removeEventListener("resize", updateMaxHeight);
     };
-  }, [isDropdownVisible, isEditingDesc, filter]);
+  }, [isDropdownVisible, isEditingDesc, filter, task]);
 
 
   const updateMaxHeight = (): void => {
@@ -170,6 +182,28 @@ export default function TaskList(props: TaskListProps) {
       console.error(error);
     }
   }
+
+  const handleTagSubmit = async (tag: string) => {
+    try {
+      const isTagActive = task.tags.includes(tag);
+      const newTags = isTagActive
+        ? { tags: task.tags.filter((existingTag) => existingTag !== tag) }
+        : { tags: [...task.tags, tag] };
+  
+      const response = await apiClient.put(`/tasks/${task.id}`, newTags);    
+      if (response.status === 200 && response.data.status === 'success') {
+        console.log("Task updated");
+        dispatch(setTags({ id: task.id, tags: newTags.tags }));
+      } else {
+        console.log("Failed to update task");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsAddTagModalOpen(false);
+    }
+  };
+  
 
 
   const parseDate = (date: string): string => {
@@ -266,15 +300,38 @@ export default function TaskList(props: TaskListProps) {
               onChange={(e) => setDesc(e.target.value)}
               onBlur={handleDescriptionSubmit}
               onKeyDown={(e) => e.key === "Enter" && handleDescriptionSubmit()}
-              className="lato-regular text-primary-black leading-[18px] ml-5 p-1 w-full resize-none overflow-hidden bg-white focus:text-black"
+              className="lato-regular text-primary-black leading-[18px] ml-5 mr-2 p-1 w-full resize-none overflow-hidden bg-white focus:text-black"
               autoFocus
               rows={3}
             />
           ) : (
-            <p className="lato-regular text-primary-black leading-[18px] ml-5 p-1 cursor-pointer" onClick={() => setIsEditingDesc(true)}>
+            <p 
+              className="lato-regular text-primary-black leading-[18px] ml-5 mr-2 p-1 cursor-pointer hover:text-primary-blue transition-all duration-200 w-full"
+              onClick={() => setIsEditingDesc(true)}
+            >
               {desc === "" ? "No Description" : desc}
             </p>
           )}
+        </div>
+
+        {/* Tags */}
+        <div className="flex mt-3 w-full translate-x-[-8px] min-h-[54px] cursor-pointer hover:opacity-70 transition-all duration-200" onClick={() => setIsAddTagModalOpen(true)}>
+          <div className="bg-primary-white rounded-l-lg p-[10px]">
+            <Image
+              src={tagIcon}
+              alt="Tag Icon"
+              width={17}
+              height={17}
+              className="mt-[6px]"
+            />
+          </div>
+          <div className="flex flex-wrap gap-3 bg-primary-white rounded-r-lg w-full p-2">
+            {task.tags.map(tagId => (
+              <div key={tagId} className={`lato-bold text-md text-primary-black px-4 py-2 rounded-md ${tagMap[tagId].style}`}>
+                {tagMap[tagId].name}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -305,6 +362,25 @@ export default function TaskList(props: TaskListProps) {
           </div>
         </div>
       </Modal>
+
+      {/* Tag Modal */}
+      <Modal onClose={() => setIsAddTagModalOpen(false)} isOpen={isAddTagModalOpen} width="300px">
+      <div className="w-full flex flex-col gap-[10px] -mt-5">
+        {Object.keys(tagMap).map((key) => (
+          <div
+            key={key}
+            className={`lato-bold text-md px-4 py-[5px] rounded-md cursor-pointer text-primary-black hover:opacity-50 transition-all duration-300 ${
+              task.tags.includes(key)
+                ? 'border-primary-blue border-[2px]'
+                : ''
+            } ${tagMap[key].style}`}
+            onClick={() => handleTagSubmit(key)}
+          >
+            {tagMap[key].name}
+          </div>
+        ))}
+      </div>
+    </Modal>
     </div>
   );
 }

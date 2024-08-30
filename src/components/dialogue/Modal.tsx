@@ -1,10 +1,11 @@
 // Libs
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, m } from 'framer-motion'
 
 // Interface
 interface ModalProps {
   onClose: () => void,
   isOpen: boolean,
+  width?: string,
   children: React.ReactNode,
 }
 
@@ -12,6 +13,7 @@ const Modal = (props: ModalProps): JSX.Element => {
   const {
     onClose,
     isOpen,
+    width,
     children
   } = props
 
@@ -29,7 +31,8 @@ const Modal = (props: ModalProps): JSX.Element => {
           <div className="fixed w-full h-full inset-0" onClick={onClose} />
 
           <motion.div
-            className="max-w-[500px] w-11/12 p-5 pt-10 bg-neutral-100 border-2 rounded-md flex flex-col items-center z-50"
+            className="w-11/12 p-5 pt-10 bg-neutral-100 border-2 rounded-md flex flex-col items-center z-50"
+            style={{ maxWidth: width || '500px' }}
             initial={{ scale: 0, rotate: '12.5deg' }}
             animate={{
               scale: 1,
