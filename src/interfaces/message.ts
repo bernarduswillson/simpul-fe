@@ -6,6 +6,11 @@ export default interface Message {
   };
   content: string;
   createdAt: string;
+  repliedTo: {
+    id: string;
+    name: string;
+    content: string;
+  }
   isUpdated: boolean;
   readBy: Array<{ id: string; name: string }>
 }

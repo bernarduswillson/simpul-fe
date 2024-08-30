@@ -2,6 +2,7 @@
 // Libs
 import { useEffect, useState, useRef } from "react";
 import lottie from 'lottie-web';
+import Image from 'next/image';
 
 // Assets
 import chatLoadingAnimation from "@/assets/animations/chat-loading.json";
@@ -21,6 +22,7 @@ import { setLastMessage } from "@/redux/reducers/chatSlice";
 // Interface
 import Message from "@/interfaces/message";
 import Chat from "@/interfaces/chat";
+import { set } from "date-fns";
 interface ChatPopupProps {
   chat: Chat | null;
   onClose: () => void;
@@ -61,6 +63,7 @@ export default function ChatPopup(props: ChatPopupProps) {
   const [isChanged, setIsChangedState] = useState<boolean | null>(null);
   const [message, setMessage] = useState("");
   const [unreadIndex, setUnreadIndex] = useState(-1);
+  const [onReply, setOnReply] = useState<{ id: String, name: string, message: string } | null>(null);
 
   // Hooks
   useEffect(() => {
@@ -106,6 +109,7 @@ export default function ChatPopup(props: ChatPopupProps) {
   const handleClose = () => {
     readMessages();
     onClose();
+    setOnReply(null);
   }
 
   useEffect(() => {
@@ -146,14 +150,18 @@ export default function ChatPopup(props: ChatPopupProps) {
 
   const sendMessage = async () => {
     if (message === "" || !chat || !userState.id) return;
-    
+  
     setSendLoading(true);
+    const tempOnReply = onReply;
+  
     try {
       const newMessageData = {
         content: message,
+        repliedTo: tempOnReply ? tempOnReply.id : null
       };
-
+  
       const response = await apiClient.post('/messages/' + userState.id + '/' + chat?.id, newMessageData);
+  
       if (response.status === 201 && response.data.status === 'success') {
         dispatch(setLastMessage(response.data.data.lastMessage));
         setData([...data, response.data.data.lastMessage]);
@@ -166,8 +174,10 @@ export default function ChatPopup(props: ChatPopupProps) {
     } finally {
       setMessage("");
       setSendLoading(false);
+      setOnReply(null);
     }
-  }
+  };
+  
 
   const isSameDay = (date1: Date, date2: Date): boolean => {
     return date1.toDateString() === date2.toDateString();
@@ -265,7 +275,7 @@ export default function ChatPopup(props: ChatPopupProps) {
                             </div>
                             )}
                     {/* Message List */}
-                    <MessageList message={message} onChange={(type) => setIsChangedState(type)} />
+                    <MessageList message={message} onChange={(type) => setIsChangedState(type)} onReply={(id, name, message) => setOnReply({ id, name, message })} />
                   </div>
                 </div>
               );
@@ -276,7 +286,7 @@ export default function ChatPopup(props: ChatPopupProps) {
       </div>
 
       {/* Chat Input */}
-      <div className="flex items-center justify-center shadow-md border-t-2 relative">
+      <div className="flex items-end justify-center shadow-md border-t-2 relative h-[90px] pb-[22px]">
 
         {/* Loading */}
         {sendLoading && 
@@ -288,14 +298,36 @@ export default function ChatPopup(props: ChatPopupProps) {
           </div>
         }
 
-        <input 
-          type="text" 
-          placeholder="Type a new message"
-          className="w-full bg-white px-3 py-2 m-5 border-2 border-primary-gray rounded-lg lato-regular focus:outline-none" 
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        />
+        <div className="relative w-full min-h-full mx-5 justify-end flex flex-col">
+          <div className={`flex flex-col`}>
+            {/* Reply */}
+            {onReply && 
+              <div className="z-50 flex justify-between border-[2px] pl-5 py-3 border-primary-gray bg-primary-white rounded-t-lg lato-regular mb-[-6px]">
+                <div>
+                  <p className="text-black lato-bold text-md">
+                    Replying to {onReply.name}
+                  </p>
+                  <p className="leading-5 text-black lato-regular text-md">
+                    {onReply.message}
+                  </p>
+                </div>
+                <button className="mr-4 flex items-start" onClick={() => setOnReply(null)}>
+                  <ExitIcon width={14} height={14} fillColor="#000" />
+                </button>
+              </div>
+            }
+
+            {/* Input */}
+            <input 
+              type="text" 
+              placeholder="Type a new message"
+              className="w-full bg-white px-3 py-[9px] border-2 border-primary-gray rounded-lg lato-regular focus:outline-none" 
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            />
+          </div>
+        </div>
         <div className="mr-5">
           <div className="hidden sm:block">
             <Button width="100" onClick={() => sendMessage()}>

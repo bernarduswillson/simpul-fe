@@ -5,14 +5,15 @@ import { AnimatePresence, motion } from "framer-motion";
 // Interface
 interface FlyoutLinkProps {
   children: ReactNode;
-  FlyoutContent: (props: { type?: string, onClick?: (type: string) => void }) => JSX.Element
+  FlyoutContent: (props: { type?: string, isUser?: boolean, onClick?: (type: string) => void }) => JSX.Element
   type?: string
+  isUser?: boolean
   onClick?: (type: string) => void;
 }
 
 const FlyoutLink = (props: FlyoutLinkProps): JSX.Element => {
   // Props
-  const { children, FlyoutContent, type, onClick } = props;
+  const { children, FlyoutContent, type, isUser, onClick } = props;
 
   // States
   const flyoutRef = useRef<HTMLDivElement>(null);
@@ -49,7 +50,7 @@ const FlyoutLink = (props: FlyoutLinkProps): JSX.Element => {
             className="absolute left-1/2 top-[85px] bg-white text-black"
           >
             <div className="absolute -top-6 left-0 right-0 h-6 bg-transparent" />
-            <FlyoutContent type={type} onClick={onClick} />
+            <FlyoutContent type={type} isUser={isUser} onClick={onClick} />
           </motion.div>
         )}
       </AnimatePresence>

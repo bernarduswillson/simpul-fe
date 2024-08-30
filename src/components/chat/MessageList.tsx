@@ -19,11 +19,12 @@ import Message from "@/interfaces/message";
 interface MessageListProps {
   message: Message;
   onChange?: (isChanged: boolean) => void;
+  onReply?: (id: string, name: string, message: string) => void;
 }
 
 export default function MessageList(props: MessageListProps) {
   // Props
-  const { message, onChange } = props;
+  const { message, onChange, onReply } = props;
 
   // States
   const dispatch = useAppDispatch();
@@ -39,6 +40,8 @@ export default function MessageList(props: MessageListProps) {
       setIsEditModalOpen(true);
     } else if (type === "delete") {
       setIsDeleteModalOpen(true);
+    } else if (type === "reply") {
+      onReply && onReply(message.id, message.user.name, message.content);
     }
   }
 
@@ -131,7 +134,7 @@ export default function MessageList(props: MessageListProps) {
 
   return (
     <div
-      className={`flex flex-col pb-3 overflow-hidden w-full px-8 ${
+      className={`flex flex-col pb-4 overflow-hidden w-full px-8 ${
         isCurrentUser ? "items-end" : "items-start"
       }`}
     >
@@ -147,17 +150,27 @@ export default function MessageList(props: MessageListProps) {
         <p className="text-chats-purple lato-bold text-lg ml-2">You</p>
       )}
 
+      {/* Reply */}
+      { message.repliedTo && message.repliedTo.content &&
+        <div className={`flex items-center bg-primary-white rounded-lg px-4 pt-2 pb-3 mb-2 max-w-md ${isCurrentUser ? 'ml-3' : 'mr-3'}`}>
+          <p className="leading-5 text-black lato-regular sm:text-lg text-md">
+            {message.repliedTo.content}
+          </p>
+        </div>
+      }
+
       {/* Message */}
       <div className="flex relative">
         {isCurrentUser && 
           <div className="absolute top-0 left-[-8px] w-7 h-7 flex justify-center items-center">
-            <EditMessageButton type="right" onClick={(type) => handleEditMessageButton(type)} />
+            <EditMessageButton type="right" isUser={isCurrentUser} onClick={(type) => handleEditMessageButton(type)} />
           </div>
         }
         <div
           className={`max-w-xs px-4 py-2 rounded-lg text-black lato-regular sm:text-lg text-md ${isCurrentUser ? 'ml-5' : 'mr-5'}`}
           style={{ backgroundColor: !isCurrentUser ? userBubbleColor : "#EEDCFF" }}
         >
+
           <p className="leading-5">{message.content}</p>
           <div className="flex">
             <p className="text-sm mt-2">{parseTime(message.createdAt)} </p>
@@ -167,10 +180,10 @@ export default function MessageList(props: MessageListProps) {
         {!isCurrentUser && 
           <div className="absolute top-0 right-[-8px] w-7 h-7 flex justify-center items-center">
             <div className="hidden sm:block">
-              <EditMessageButton type="right" onClick={(type) => handleEditMessageButton(type)} />
+              <EditMessageButton type="right" isUser={isCurrentUser} onClick={(type) => handleEditMessageButton(type)} />
             </div>
             <div className="sm:hidden block">
-              <EditMessageButton type="left" onClick={(type) => handleEditMessageButton(type)} />
+              <EditMessageButton type="left" isUser={isCurrentUser} onClick={(type) => handleEditMessageButton(type)} />
             </div>
           </div>
         }
