@@ -185,6 +185,7 @@ export default function TaskList(props: TaskListProps) {
 
   const handleTagSubmit = async (tag: string) => {
     try {
+      setIsAddTagModalOpen(false);
       const isTagActive = task.tags.includes(tag);
       const newTags = isTagActive
         ? { tags: task.tags.filter((existingTag) => existingTag !== tag) }
@@ -200,7 +201,6 @@ export default function TaskList(props: TaskListProps) {
     } catch (error) {
       console.error(error);
     } finally {
-      setIsAddTagModalOpen(false);
     }
   };
   
