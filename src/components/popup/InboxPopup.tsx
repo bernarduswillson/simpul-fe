@@ -5,7 +5,7 @@ import lottie from 'lottie-web';
 
 // Components
 import InboxSearchBar from "@/components/input/InboxSearchBar";
-import ChatList from "@/components/chat/ChatList";
+import ChatList from "@/components/list/ChatList";
 import ChatPopup from "@/components/popup/ChatPopup";
 
 // Hooks

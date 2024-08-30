@@ -9,7 +9,7 @@ import LeftArrowIcon from "@/assets/icons/left-arrow-ic";
 
 // Components
 import Button from "@/components/button/Button";
-import MessageList from "@/components/chat/MessageList";
+import MessageList from "@/components/list/MessageList";
 
 // Hooks
 import apiClient from "@/api/apiClient";
@@ -27,6 +27,7 @@ interface ChatPopupProps {
   chat: Chat | null;
   onClose: () => void;
 }
+
 
 export default function ChatPopup(props: ChatPopupProps) {
   // Props

@@ -8,7 +8,7 @@ import taskLoadingAnimation from "@/assets/animations/task-loading.json";
 
 // Components
 import FilterTaskButton from "@/components/button/FilterTaskButton";
-import TaskList from "@/components/task/TaskList";
+import TaskList from "@/components/list/TaskList";
 import NewTaskButton from "@/components/button/NewTaskButton";
 
 // Hooks

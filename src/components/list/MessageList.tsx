@@ -13,6 +13,7 @@ import { setLastMessage } from "@/redux/reducers/chatSlice";
 
 // Utils
 import { dateToTime } from "@/utils/date";
+import { hashCode, intToBubbleColor, intToNameColor } from "@/utils/colors";
 
 // Interface
 import Message from "@/interfaces/message";
@@ -31,7 +32,6 @@ export default function MessageList(props: MessageListProps) {
   const dispatch = useAppDispatch();
   const userState = useAppSelector((state) => state.user.value);
   const isCurrentUser = message.user.id === userState.id;
-  const [loading, setLoading] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editedMessage, setEditedMessage] = useState(message.content);
@@ -96,33 +96,6 @@ export default function MessageList(props: MessageListProps) {
       // setLoading(false);
     }
   }, []);
-
-
-  // Generate colors
-  const hashCode = (str: string) => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char * 77;
-    }
-    return hash;
-  };
-  
-  const intToBubbleColor = (int: number) => {
-    const hue = Math.abs(int % 360);
-    const saturation = 30 + (Math.abs(int % 20));
-    const lightness = 80 + (Math.abs(int % 20) - 10); 
-    
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  };
-
-  const intToNameColor = (int: number) => {
-    const hue = Math.abs(int % 360);
-    const saturation = 70 + (Math.abs(int % 20));
-    const lightness = 50 + (Math.abs(int % 20) - 10); 
-    
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  };
 
   const userBubbleColor = intToBubbleColor(hashCode(message.user.id));
   const userNameColor = intToNameColor(hashCode(message.user.id));
